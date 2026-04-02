@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Cliente;
 use App\Models\Sesion;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
+use Illuminate\Support\Facades\Auth;
 
 class ClienteAuthController extends Controller
 {
@@ -15,10 +15,10 @@ class ClienteAuthController extends Controller
             return redirect()->route('cliente.carta');
         }
 
-        return view('cliente.ingreso');
+        return view('cliente.acceso');
     }
 
-    public function ingresar(Request $request)
+    public function acceder(Request $request)
     {
         $request->validate([
             'codigo' => ['required', 'string', 'max:6'],
@@ -39,5 +39,13 @@ class ClienteAuthController extends Controller
         return back()->withErrors([
             'codigo' => 'Código inválido o sesión finalizada. Consulta con el camarero.',
         ])->onlyInput('codigo');
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('cliente.inicio');
     }
 }

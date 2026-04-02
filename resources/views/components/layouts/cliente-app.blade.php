@@ -90,6 +90,10 @@
         .nav-item.active {
             color: var(--primary-orange);
         }
+
+        .bg-orange {
+            background-color: #ff8800 !important;
+        }
     </style>
 </head>
 

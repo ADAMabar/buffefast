@@ -17,20 +17,39 @@ use App\Http\Controllers\Cocina\CocinaController;
 
 use App\Http\Controllers\Cliente\ClienteAuthController;
 use App\Http\Controllers\Cliente\ClienteController;
-// ==========================================
-// 📱 MÓDULO CLIENTE (Mobile-First)
-// ==========================================
+use App\Http\Controllers\Cliente\MenuController;
+use App\Http\Controllers\Cliente\CarritoController;
 
-// Pantalla de ingreso del código de mesa
-Route::get('/', [ClienteAuthController::class, 'mostrarIngreso'])->name('cliente.login');
-Route::post('/ingresar', [ClienteAuthController::class, 'ingresar'])->name('cliente.ingresar');
-Route::get('/carta', [ClienteController::class, 'carta'])->name('cliente.carta');
-Route::post('/carta', [ClienteController::class, 'agregarAlCarrito'])->name('cliente.agregarAlCarrito');
 
-// La carta (Menú) - La crearemos en el siguiente paso
-/*Route::get('/carta', function () {
-    return "¡Bienvenido a la mesa! Aquí irá la carta de Sushi.";
-})->name('cliente.carta');*/
+/*
+|--------------------------------------------------------------------------
+| RUTAS DEL CLIENTE
+|--------------------------------------------------------------------------
+*/
+
+// Pantalla de login (Código + Nombre)
+Route::get('/', function () {
+    return view('cliente.ingreso');
+})->name('cliente.inicio');
+Route::post('/acceder', [ClienteAuthController::class, 'acceder'])->name('cliente.acceder');
+
+// LA CARTA (Conectada a tu nuevo controlador)
+Route::get('/carta', [MenuController::class, 'index'])->name('cliente.carta');
+
+// --- RUTAS TEMPORALES (Para que no peten los botones de la vista) ---
+Route::get('/carrito', [CarritoController::class, 'index'])->name('cliente.carrito');
+Route::post('/carrito/add/{id}', function ($id) {
+    return "Añadiste el plato $id al carrito";
+})->name('cliente.carrito.add');
+Route::get('/cuenta', function () {
+    return "Página de cuenta en construcción 🚧";
+})->name('cliente.cuenta');
+
+
+// Cambia la ruta temporal por esta real:
+Route::post('/carrito/add/{id}', [CarritoController::class, 'agregar'])->name('cliente.carrito.add');
+Route::post('/carrito/remove/{id}', [CarritoController::class, 'eliminar'])->name('cliente.carrito.remove');
+Route::get('/logout-cliente', [ClienteAuthController::class, 'logout'])->name('cliente.logout');
 
 // ==========================================
 // 👨‍🍳 MÓDULO STAFF (Administración y Cocina)
@@ -74,7 +93,6 @@ Route::middleware('auth')->group(function () {
 
 
 
-Route::get('/carta', [ClienteController::class, 'carta'])->name('cliente.carta');
 use App\Http\Controllers\Admin\AdminController;
 
 Route::middleware('auth')->group(function () {

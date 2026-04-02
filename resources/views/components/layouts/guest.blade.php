@@ -42,7 +42,6 @@
             background: var(--card-bg);
             border: 1px solid var(--primary-orange);
             /* Borde naranja solicitado */
-
             padding: 2.5rem;
             box-shadow: 0 20px 40px -15px rgba(255, 122, 0, 0.15);
             /* Sombra suave teñida de naranja */

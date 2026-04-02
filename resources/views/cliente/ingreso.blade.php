@@ -10,7 +10,7 @@
             <p class="text-muted">Ingresa el código de tu mesa para empezar a pedir.</p>
         </div>
 
-        <form action="{{ route('cliente.ingresar') }}" method="POST" class="w-100">
+        <form action="{{ route('cliente.acceder') }}" method="POST" class="w-100">
             @csrf
             <div class="mb-4 text-center">
                 <input type="text" name="codigo" class="form-control form-control-lg text-center fw-bold"
