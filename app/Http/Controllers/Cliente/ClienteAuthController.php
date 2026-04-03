@@ -5,6 +5,7 @@ use App\Models\Sesion;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Cliente;
 
 class ClienteAuthController extends Controller
 {
@@ -22,8 +23,10 @@ class ClienteAuthController extends Controller
     {
         $request->validate([
             'codigo' => ['required', 'string', 'max:6'],
+            'nombre' => ['required', 'string', 'max:50'],
         ], [
             'codigo.required' => 'Por favor, introduce el código de tu mesa.',
+            'nombre.required' => 'Por favor, dinos tu nombre.',
         ]);
 
         // Buscamos una sesión activa que coincida con el código
@@ -32,13 +35,22 @@ class ClienteAuthController extends Controller
             ->first();
 
         if ($sesion) {
-            // Guardamos el ID de la sesión en el navegador del cliente
-            session(['sesion_id' => $sesion->id]);
+            $cliente = Cliente::create([
+                'nombre' => $request->nombre,
+                'sesion_id' => $sesion->id
+            ]);
+
+            // Guardamos el ID de la sesión y del cliente en el navegador
+            session([
+                'sesion_id' => $sesion->id,
+                'cliente_id' => $cliente->id
+            ]);
+
             return redirect()->route('cliente.carta');
         }
         return back()->withErrors([
             'codigo' => 'Código inválido o sesión finalizada. Consulta con el camarero.',
-        ])->onlyInput('codigo');
+        ])->onlyInput('codigo', 'nombre');
     }
 
     public function logout(Request $request)

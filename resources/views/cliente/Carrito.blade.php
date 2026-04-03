@@ -54,16 +54,50 @@
                 @endforeach
             </div>
 
-            <div class="position-fixed w-100 p-3" style="bottom: 70px; left: 0; z-index: 1020;">
-                <form action="#" method="POST">
-                    @csrf
-                    <button type="submit"
-                        class="btn bg-orange text-blank w-100 rounded-pill py-3 fw-bold shadow-lg d-flex justify-content-between align-items-center px-4">
-                        <span>Confirmar a Cocina</span>
-                        <i class="bi bi-check-circle-fill fs-5"></i>
+            <div id="contenedor-confirmar" class="position-fixed w-100 p-3" style="bottom: 70px; left: 0; z-index: 1020;">
+
+                @if($segundosRestantes > 0)
+                    <button id="btn-espera" disabled
+                        class="btn btn-secondary w-100 rounded-pill py-3 fw-bold shadow-lg d-flex justify-content-between align-items-center px-4">
+                        <span>Espera para pedir: <span id="contador-reloj">--:--</span></span>
+                        <i class="bi bi-clock-history fs-5"></i>
                     </button>
-                </form>
+                @else
+                    <form action="{{ route('cliente.carrito.confirmar') }}" method="POST">
+                        @csrf
+                        <button type="submit"
+                            class="btn bg-orange text-white w-100 rounded-pill py-3 fw-bold shadow-lg d-flex justify-content-between align-items-center px-4">
+                            <span>Confirmar a Cocina</span>
+                            <i class="bi bi-check-circle-fill fs-5"></i>
+                        </button>
+                    </form>
+                @endif
             </div>
+
+            <script>
+                // 1. Convertimos el dato de PHP a entero inmediatamente
+                let segundos = Math.round({{ $segundosRestantes }});
+
+                if (segundos > 0) {
+                    const display = document.querySelector('#contador-reloj');
+
+                    // 2. Función para pintar el tiempo (la sacamos fuera para llamarla al instante)
+                    const actualizarReloj = () => {
+                        let minutos = Math.floor(segundos / 60);
+                        let segs = Math.floor(segundos % 60);
+
+                        display.textContent = `${minutos.toString().padStart(2, '0')}:${segs.toString().padStart(2, '0')}`;
+
+                        if (segundos <= 0) {
+                            clearInterval(intervalo);
+                            location.reload();
+                        }
+                        segundos--;
+                    };
+                    actualizarReloj();
+                    const intervalo = setInterval(actualizarReloj, 1000);
+                }
+            </script>
         @endif
     </div>
 

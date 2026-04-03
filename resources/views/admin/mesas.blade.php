@@ -38,7 +38,6 @@
 
             <div class="col-12 col-md-6 col-lg-4 col-xl-3">
                 <div class="mesa-card h-100 d-flex flex-column" style="border-top: 4px solid {{ $color }};">
-
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <h3 class="h2 fw-bold mb-0">#{{ $mesa->numero }}</h3>
                         <span class="badge rounded-pill text-white px-2 py-1" style="background-color: {{ $color }};">

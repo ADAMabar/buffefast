@@ -19,6 +19,7 @@ use App\Http\Controllers\Cliente\ClienteAuthController;
 use App\Http\Controllers\Cliente\ClienteController;
 use App\Http\Controllers\Cliente\MenuController;
 use App\Http\Controllers\Cliente\CarritoController;
+use App\Http\Controllers\Cliente\CuentaController;
 
 
 /*
@@ -49,13 +50,16 @@ Route::get('/cuenta', function () {
 // Cambia la ruta temporal por esta real:
 Route::post('/carrito/add/{id}', [CarritoController::class, 'agregar'])->name('cliente.carrito.add');
 Route::post('/carrito/remove/{id}', [CarritoController::class, 'eliminar'])->name('cliente.carrito.remove');
-Route::get('/logout-cliente', [ClienteAuthController::class, 'logout'])->name('cliente.logout');
+Route::post('/carrito/confirmar', [CarritoController::class, 'confirmar'])->name('cliente.carrito.confirmar');
+
+Route::get('/cuenta', [CuentaController::class, 'index'])->name('cliente.cuenta');
+Route::get('/logout-cliente', [AuthController::class, 'logout'])->name('cliente.logout');
+
 
 // ==========================================
 // 👨‍🍳 MÓDULO STAFF (Administración y Cocina)
 // ==========================================
 
-// Rutas accesibles solo si NO estás logueado
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');

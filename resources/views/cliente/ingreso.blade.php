@@ -13,12 +13,21 @@
         <form action="{{ route('cliente.acceder') }}" method="POST" class="w-100">
             @csrf
             <div class="mb-4 text-center">
-                <input type="text" name="codigo" class="form-control form-control-lg text-center fw-bold"
+                <input type="text" name="codigo" class="form-control form-control-lg text-center fw-bold mb-3"
                     placeholder="Ej: A1B2C3" maxlength="6"
                     style="font-size: 1.5rem; letter-spacing: 0.5rem; border-radius: 16px; border: 2px solid #E5E7EB; text-transform: uppercase;"
-                    required>
+                    value="{{ old('codigo') }}" required>
 
                 @error('codigo')
+                    <div class="text-danger small mt-2 fw-medium mb-3">{{ $message }}</div>
+                @enderror
+
+                <input type="text" name="nombre" class="form-control form-control-lg text-center fw-bold"
+                    placeholder="Tu nombre (Ej: Juan)" 
+                    style="border-radius: 16px; border: 2px solid #E5E7EB;"
+                    value="{{ old('nombre') }}" required>
+
+                @error('nombre')
                     <div class="text-danger small mt-2 fw-medium">{{ $message }}</div>
                 @enderror
             </div>

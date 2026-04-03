@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Plato;
 use App\Models\Sesion;
+use App\Models\Pedido;
+use App\Models\Configuracion;
 
 class CarritoController extends Controller
 {
@@ -46,12 +48,32 @@ class CarritoController extends Controller
     {
         // 1. Leemos el carrito de la sesión (si está vacío, devolvemos un array vacío)
         $carrito = session('carrito', []);
+        $sesion_id = session('sesion_id');
 
         // 2. Recuperamos la sesión actual para poder pintar el número de mesa arriba
         $sesion = Sesion::with('mesa')->find(session('sesion_id'));
 
-        // 3. Mandamos los datos a la vista que vamos a crear
-        return view('cliente.carrito', compact('carrito', 'sesion'));
+        $minutosEspera = (int) (Configuracion::where('clave', 'minutos_entre_rondas')->value('valor') ?? 10);
+
+        // Buscamos el último pedido de esta mesa
+        $ultimoPedido = Pedido::where('sesion_id', $sesion_id)
+            ->latest()
+            ->first();
+
+        $segundosRestantes = 0;
+
+        if ($ultimoPedido) {
+            // Calculamos la diferencia entre "ahora" y "el momento en que pidió + el tiempo de espera"
+            $tiempoPermitido = $ultimoPedido->created_at->addMinutes($minutosEspera);
+            $ahora = now();
+
+            if ($ahora->lt($tiempoPermitido)) {
+                $segundosRestantes = $ahora->diffInSeconds($tiempoPermitido);
+            }
+        }
+
+        return view('cliente.carrito', compact('carrito', 'sesion', 'segundosRestantes'));
+
     }
     public function eliminar($id)
     {
@@ -71,8 +93,58 @@ class CarritoController extends Controller
         session()->put('carrito_count', $totalItems);
 
         return back()->with('success', 'Plato eliminado del pedido.');
+    }
 
 
+
+
+
+
+
+    public function confirmar()
+    {
+        //Aqui me aseguro que aunque toquen el script desde la consola del navegador, no se vea afectado el contador
+        $sesion_id = session('sesion_id');
+        $minutosEspera = (int) (Configuracion::where('clave', 'minutos_entre_rondas')->value('valor') ?? 10);
+
+        $ultimoPedido = Pedido::where('sesion_id', $sesion_id)->latest()->first();
+
+        if ($ultimoPedido && now()->lt($ultimoPedido->created_at->addMinutes($minutosEspera))) {
+            return back()->with('error', 'Aún debes esperar un poco para la siguiente ronda.');
+        }
+
+
+
+        $cliente_id = session('cliente_id');
+        $sesion_id = session('sesion_id');
+        // 1. Leemos el carrito. Si está vacío por algún error, le devolvemos.
+        $carrito = session()->get('carrito', []);
+        if (empty($carrito)) {
+            return back()->with('error', 'No puedes enviar un pedido vacío.');
+        }
+        // Contamos los pedidos que ya existen para esta sesión y sumamos 1
+        $rondaActual = Pedido::where('sesion_id', $sesion_id)->count() + 1;
+
+        // Creamos el registro principal en la tabla `pedidos` (AHORA SÍ CON TODO)
+        $pedido = Pedido::create([
+            'cliente_id' => $cliente_id,
+            'sesion_id' => $sesion_id,
+            'ronda' => $rondaActual,
+            'estado' => 'pendiente'
+        ]);
+        // Recorremos el carrito y usamos attach() para guardar en la tabla intermedia `pedido_platos`
+        foreach ($carrito as $idPlato => $detalles) {
+            $pedido->platos()->attach($idPlato, [
+                'cantidad' => $detalles['cantidad']
+            ]);
+        }
+
+        // 5. El pedido ya está en la Base de Datos. ¡Vaciamos la mochila temporal!
+        session()->forget('carrito');
+        session()->forget('carrito_count');
+
+        // 6. Redirigimos a la carta con un mensaje de celebración
+        return redirect()->route('cliente.carta')->with('success', '¡Marchando! Tu pedido ya está en la cocina.');
     }
 }
 
