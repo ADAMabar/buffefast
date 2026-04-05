@@ -39,12 +39,12 @@ Route::get('/carta', [MenuController::class, 'index'])->name('cliente.carta');
 
 // --- RUTAS TEMPORALES (Para que no peten los botones de la vista) ---
 Route::get('/carrito', [CarritoController::class, 'index'])->name('cliente.carrito');
+
 Route::post('/carrito/add/{id}', function ($id) {
     return "Añadiste el plato $id al carrito";
 })->name('cliente.carrito.add');
-Route::get('/cuenta', function () {
-    return "Página de cuenta en construcción 🚧";
-})->name('cliente.cuenta');
+
+Route::get('/cuenta', [CuentaController::class, 'index'])->name('cliente.cuenta');
 
 
 // Cambia la ruta temporal por esta real:
@@ -52,8 +52,8 @@ Route::post('/carrito/add/{id}', [CarritoController::class, 'agregar'])->name('c
 Route::post('/carrito/remove/{id}', [CarritoController::class, 'eliminar'])->name('cliente.carrito.remove');
 Route::post('/carrito/confirmar', [CarritoController::class, 'confirmar'])->name('cliente.carrito.confirmar');
 
-Route::get('/cuenta', [CuentaController::class, 'index'])->name('cliente.cuenta');
-Route::get('/logout-cliente', [AuthController::class, 'logout'])->name('cliente.logout');
+
+Route::get('/logout-cliente', [ClienteAuthController::class, 'logout'])->name('cliente.logout');
 
 
 // ==========================================
@@ -98,11 +98,18 @@ Route::middleware('auth')->group(function () {
 
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\ClienteAdminController;
 
 Route::middleware('auth')->group(function () {
-    // ... tus otras rutas ...
+
 
     // Rutas de Admin/TPV
     Route::get('/dashboard', [AdminController::class, 'indexMesas'])->name('admin.mesas');
     Route::post('/mesa/{mesa}/activar', [AdminController::class, 'activarMesa'])->name('admin.mesa.activar');
+    Route::post('/admin/mesa/eliminar/{id}', [AdminController::class, 'eliminar'])->name('admin.mesa.eliminar');
+    Route::post('/admin/mesa/store', [AdminController::class, 'store'])->name('admin.mesa.store');
+    // Ruta para ver el TPV de una mesa concreta
+    Route::get('/admin/mesa/{id}/tpv', [ClienteAdminController::class, 'show'])->name('admin.mesa.show');
+    Route::post('/admin/mesa/{id}/desocupar', [ClienteAdminController::class, 'desocupar'])->name('admin.mesa.desocupar');
+    Route::get('/admin/mesa/lista-mesas-libres', [ClienteAdminController::class, 'listaMesasLibres'])->name('admin.mesa.lista-mesas-libres');
 });

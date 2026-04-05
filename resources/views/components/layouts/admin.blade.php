@@ -87,6 +87,31 @@
             transform: translateY(-3px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
         }
+
+        .btn-primary:hover {
+            background-color: #994c04;
+        }
+
+        .btn-primary {
+            background-color: #FF7A00;
+            border: none;
+            transition: 0.3s;
+            margin-bottom: 10px;
+        }
+
+        .btn-eliminar {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: #EF4444;
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            font-size: 0.85rem;
+            margin-top: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-eliminar:hover {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #b91c1c;
+        }
     </style>
 </head>
 
@@ -134,6 +159,7 @@
                 </button>
             </form>
         </div>
+
     </aside>
 
     <main class="main-content">

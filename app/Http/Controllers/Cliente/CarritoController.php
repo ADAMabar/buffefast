@@ -46,6 +46,19 @@ class CarritoController extends Controller
     }
     public function index()
     {
+        // 1. EL GUARDIA DE SEGURIDAD
+        $sesion_id = session('sesion_id');
+        $sesionDB = Sesion::find($sesion_id);
+
+        // Si no hay sesión en la BD, o el administrador la ha marcado como 'cerrada'
+        if (!$sesionDB || $sesionDB->estado === 'cerrada') {
+            // Le vaciamos la memoria (cookies) al móvil del cliente por completo
+            session()->forget(['sesion_id', 'cliente_id', 'carrito', 'carrito_count']);
+
+            // Lo expulsamos a la pantalla de inicio de sesión
+            return redirect()->route('cliente.inicio')->with('error', 'Tu mesa ha sido cerrada y cobrada. ¡Gracias por tu visita!');
+        }
+
         // 1. Leemos el carrito de la sesión (si está vacío, devolvemos un array vacío)
         $carrito = session('carrito', []);
         $sesion_id = session('sesion_id');
@@ -53,7 +66,7 @@ class CarritoController extends Controller
         // 2. Recuperamos la sesión actual para poder pintar el número de mesa arriba
         $sesion = Sesion::with('mesa')->find(session('sesion_id'));
 
-        $minutosEspera = (int) (Configuracion::where('clave', 'minutos_entre_rondas')->value('valor') ?? 10);
+        $minutosEspera = (int) (Configuracion::where('clave', 'minutos_entre_rondas')->value('valor') ?? 0.1);
 
         // Buscamos el último pedido de esta mesa
         $ultimoPedido = Pedido::where('sesion_id', $sesion_id)
@@ -72,7 +85,9 @@ class CarritoController extends Controller
             }
         }
 
-        return view('cliente.carrito', compact('carrito', 'sesion', 'segundosRestantes'));
+        $rondaActual = Pedido::where('sesion_id', $sesion_id)->count() + 1;
+
+        return view('cliente.carrito', compact('carrito', 'sesion', 'segundosRestantes', 'rondaActual'));
 
     }
     public function eliminar($id)
@@ -143,7 +158,7 @@ class CarritoController extends Controller
         session()->forget('carrito');
         session()->forget('carrito_count');
 
-        // 6. Redirigimos a la carta con un mensaje de celebración
+
         return redirect()->route('cliente.carta')->with('success', '¡Marchando! Tu pedido ya está en la cocina.');
     }
 }

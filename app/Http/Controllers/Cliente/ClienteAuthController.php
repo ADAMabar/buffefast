@@ -55,9 +55,7 @@ class ClienteAuthController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        $request->session()->forget(['sesion_id', 'cliente_id', 'carrito', 'carrito_count']);
         return redirect()->route('cliente.inicio');
     }
 }

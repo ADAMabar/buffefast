@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BuffeFast - Menú</title>
+    <title>BuffeFast - App</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -42,7 +42,7 @@
             /* Espacio para el top nav */
         }
 
-        /* Top Nav (Contador de Ronda) */
+        /* Top Nav */
         .top-nav {
             position: fixed;
             top: 0;
@@ -53,10 +53,9 @@
             -webkit-backdrop-filter: blur(10px);
             z-index: 1030;
             border-bottom: 1px solid #E5E7EB;
-            padding: 1rem;
         }
 
-        /* Bottom Nav 2026 */
+        /* Bottom Nav */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -87,19 +86,49 @@
             margin-bottom: 2px;
         }
 
-        .nav-item.active {
-            color: var(--primary-orange);
+        .text-orange {
+            color: var(--primary-orange) !important;
         }
 
         .bg-orange {
-            background-color: #ff8800 !important;
+            background-color: var(--primary-orange) !important;
+        }
+
+        /* Ocultar barra de scroll en categorías */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
     </style>
 </head>
 
 <body>
     <div class="mobile-container">
+
+        {{-- Alertas de éxito (flash messages) y errores --}}
+        <div class="px-3 mt-3 w-100 position-absolute" style="z-index: 1040; top: 70px;">
+            @if ($message = Session::get('success'))
+                <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-4 border-success-subtle" role="alert">
+                    <p class="mb-0 fw-medium">{{ $message }}</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            @if ($message = Session::get('error'))
+                <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-4 border-danger-subtle" role="alert">
+                    <p class="mb-0 fw-medium">{{ $message }}</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+        </div>
+
+        {{-- Aquí se inyectará el contenido de carta, carrito y cuenta --}}
         {{ $slot }}
+
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

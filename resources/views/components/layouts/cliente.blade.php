@@ -27,6 +27,7 @@
             display: flex;
             justify-content: center;
             min-height: 100vh;
+            margin: 0;
         }
 
         .mobile-container {
@@ -39,16 +40,20 @@
             box-shadow: 0 0 40px rgba(0, 0, 0, 0.05);
             display: flex;
             flex-direction: column;
+            padding: 1.5rem;
+            /* Un poco de padding por defecto */
         }
     </style>
 </head>
 
 <body>
     <main class="mobile-container">
-        <div class="row justify-content-center align-items-center mb-4">
+
+        {{-- Alertas de éxito (flash messages) --}}
+        <div class="row justify-content-center align-items-center mb-4 w-100 mx-0">
             @if ($message = Session::get('success'))
-                <div class="col-12 col-md-6">
-                    <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-4 border-success-subtle"
+                <div class="col-12 px-0">
+                    <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-4 border-success-subtle mb-0"
                         role="alert">
                         <p class="mb-0 fw-medium">{{ $message }}</p>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -56,7 +61,10 @@
                 </div>
             @endif
         </div>
+
+        {{-- Aquí se inyectará el contenido de la vista --}}
         {{ $slot }}
+
     </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
