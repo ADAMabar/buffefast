@@ -45,12 +45,9 @@ class ClienteAdminController extends Controller
         // 3. Si hay sesión, la cerramos con la palabra EXACTA
         if ($sesionActiva) {
             $sesionActiva->update([
-                'estado' => 'cerrada' // <-- ¡Magia pura terminada en A!
+                'estado' => 'cerrada'
             ]);
         }
-
-
-        // 4. Volvemos al panel principal
         return redirect()->route('admin.mesas')->with('success', 'Mesa' . $mesa->numero . ' cobrada y desocupada.');
     }
     public function listaMesasLibres()

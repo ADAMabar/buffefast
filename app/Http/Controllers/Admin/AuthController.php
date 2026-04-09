@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\Admin\LoginAdminRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 
@@ -12,12 +13,9 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    public function login(Request $request)
+    public function login(LoginAdminRequest $request)
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+        $credentials = $request->validated();
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();

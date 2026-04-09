@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Cocina;
 
 use App\Models\Pedido;
 use Illuminate\Http\Request;
+use App\Http\Requests\Cocina\CambiarEstadoPedidoRequest;
 use App\Http\Controllers\Controller;
 
 class CocinaController extends Controller
@@ -24,12 +25,10 @@ class CocinaController extends Controller
         return view('cocina.index', compact('pendientes', 'preparando', 'servidos'));
     }
 
-    public function cambiarEstado(Request $request, Pedido $pedido)
+    public function cambiarEstado(CambiarEstadoPedidoRequest $request, Pedido $pedido)
     {
-        // Reglas de validación de Laravel 12
-        $validated = $request->validate([
-            'estado' => ['required', 'string', 'in:preparando,servido'],
-        ]);
+        // Reglas de validación delegadas al Form Request
+        $validated = $request->validated();
 
         // Regla de Negocio: No se puede saltar de pendiente a servido directamente (opcional, pero buena práctica)
         if ($pedido->estado === 'pendiente' && $validated['estado'] === 'servido') {

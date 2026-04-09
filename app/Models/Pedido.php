@@ -33,4 +33,10 @@ class Pedido extends Model
         return $this->belongsToMany(Plato::class, 'pedido_platos')
             ->withPivot('cantidad');
     }
+
+    public function detalles()
+    {
+        return $this->hasMany(PedidoPlato::class);
+    }
+
 }

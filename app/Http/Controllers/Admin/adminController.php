@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Mesa;
 use App\Models\Sesion;
 use Illuminate\Http\Request;
+use App\Http\Requests\Admin\StoreMesaRequest;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 
@@ -48,29 +49,38 @@ class AdminController extends Controller
         // 1. Buscamos la mesa
         $mesa = Mesa::findOrFail($id);
 
-        // 2. Seguridad extra: comprobamos si tiene sesiones activas
-        if ($mesa->sesiones()->count() > 0) {
+        // 2. Seguridad extra: comprobamos si tiene sesiones EN CURSO (activa o cuenta)
+        $ocupada = $mesa->sesiones()
+            ->whereIn('estado', ['activa', 'solicitando_cuenta'])
+            ->exists();
+
+        if ($ocupada) {
             return back()->with('error', '¡No puedes borrar la Mesa ' . $mesa->numero . ' porque está ocupada!');
         }
 
-        // 3. Si está libre, la borramos
+        // 3. Para que la DB nos deje borrarla (integridad referencial), limpiamos su rastro
+        // Recorremos todas las sesiones pasadas (cerradas)
+        foreach ($mesa->sesiones as $sesion) {
+            // Borramos los pedidos de esa sesión y sus relaciones en la tabla intermedia
+            foreach ($sesion->pedidos as $pedido) {
+                $pedido->platos()->detach(); // Borra en pedido_platos
+                $pedido->delete();           // Borra en pedidos
+            }
+            // Borramos los clientes de esa sesión
+            $sesion->clientes()->delete();
+            // Borramos la sesión
+            $sesion->delete();
+        }
+
+        // 4. Finalmente, borramos la mesa
         $mesa->delete();
 
-        // 4. Devolvemos a la vista principal
-        return back()->with('success', 'Mesa ' . $mesa->numero . ' eliminada correctamente.');
+        // 5. Devolvemos a la vista principal
+        return back()->with('success', 'Mesa ' . $mesa->numero . ' y todo su historial eliminados correctamente.');
     }
 
-    public function store(Request $request)
+    public function store(StoreMesaRequest $request)
     {
-        $request->validate([
-            'numero' => 'required|integer|min:1|unique:mesas,numero',
-            'capacidad' => 'required|integer|min:1',
-        ], [
-            'numero.required' => 'El número de la mesa es obligatorio.',
-            'numero.integer' => 'El número de la mesa debe ser un número entero.',
-            'numero.min' => 'El número de la mesa debe ser mayor o igual a 1.',
-            'numero.unique' => 'La mesa ya existe.',
-        ]);
 
         Mesa::create($request->all());
 

@@ -130,13 +130,13 @@
             <a href="{{ route('admin.mesas') }}" class="nav-link-admin active">
                 <i class="bi bi-grid-fill"></i> Gestión de Mesas
             </a>
-            <a href="#" class="nav-link-admin">
+            <a href="{{ route('admin.platos.index') }}" class="nav-link-admin">
                 <i class="bi bi-journal-richtext"></i> Menú de Platos
             </a>
             <a href="#" class="nav-link-admin">
                 <i class="bi bi-graph-up-arrow"></i> Historial / Ventas
             </a>
-            <a href="#" class="nav-link-admin">
+            <a href="{{ route('admin.configuracion.index') }}" class="nav-link-admin">
                 <i class="bi bi-gear-fill"></i> Configuración
             </a>
         </nav>

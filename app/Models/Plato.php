@@ -9,10 +9,13 @@ class Plato extends Model
     protected $primaryKey = 'id';
     protected $fillable = ['nombre', 'descripcion', 'categoria_id', 'imagen', 'activo'];
     public $timestamps = true;
+    protected $casts = [
+        'activo' => 'boolean',
+    ];
 
     public function categoria()
     {
-        return $this->belongsTo(Categorias::class);
+        return $this->belongsTo(Categorias::class, 'categoria_id');
     }
 
     public function pedidos()

@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Cliente;
 
 use App\Models\Sesion;
 use Illuminate\Http\Request;
+use App\Http\Requests\Cliente\AccesoClienteRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Cliente;
@@ -19,15 +20,8 @@ class ClienteAuthController extends Controller
         return view('cliente.acceso');
     }
 
-    public function acceder(Request $request)
+    public function acceder(AccesoClienteRequest $request)
     {
-        $request->validate([
-            'codigo' => ['required', 'string', 'max:6'],
-            'nombre' => ['required', 'string', 'max:50'],
-        ], [
-            'codigo.required' => 'Por favor, introduce el código de tu mesa.',
-            'nombre.required' => 'Por favor, dinos tu nombre.',
-        ]);
 
         // Buscamos una sesión activa que coincida con el código
         $sesion = Sesion::where('codigo', $request->codigo)

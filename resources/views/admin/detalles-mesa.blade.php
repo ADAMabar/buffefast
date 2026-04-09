@@ -12,11 +12,25 @@
             </p>
         </div>
 
-        <div>
+        <div class="d-flex gap-2">
+            <form action="{{ route('admin.mesa.desocupar', $mesa->id) }}" method="POST">
+                @csrf
+                <button class="btn btn-primary fw-bold shadow-sm rounded-pill px-4 py-2">
+                    <i class="bi bi-printer me-1"></i> Ticket
+                </button>
+            </form>
+
+            <form action="{{ route('admin.mesa.desocupar', $mesa->id) }}" method="POST">
+                @csrf
+                <button class="btn btn-warning fw-bold shadow-sm rounded-pill px-4 py-2">
+                    <i class="bi bi-door-closed me-1"></i> Cerrar
+                </button>
+            </form>
+
             <form action="{{ route('admin.mesa.desocupar', $mesa->id) }}" method="POST">
                 @csrf
                 <button class="btn btn-danger fw-bold shadow-sm rounded-pill px-4 py-2">
-                    <i class="bi bi-receipt-cutoff me-1"></i> Cerrar y Cobrar
+                    <i class="bi bi-cash-stack me-1"></i> Cobrar
                 </button>
             </form>
         </div>

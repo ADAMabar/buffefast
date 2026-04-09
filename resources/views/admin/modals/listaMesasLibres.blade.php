@@ -18,7 +18,7 @@
                             <p class="text-muted">No hay ninguna mesa libre en este momento.</p>
                         </div>
                     @else
-                        @foreach($mesasLibres as $mesa)
+                        @foreach($mesasLibres->sortBy('numero') as $mesa)
                             <div class="col-6 col-md-4 col-lg-3">
                                 <div class="card border-success border-2 shadow-sm h-100 rounded-4 text-center p-3">
                                     <h3 class="fw-bold mb-1">#{{ $mesa->numero }}</h3>
