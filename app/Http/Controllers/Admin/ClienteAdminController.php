@@ -7,62 +7,135 @@ use App\Models\Sesion;
 use Illuminate\Http\Request;
 use App\Models\Mesa;
 use App\Models\Pedido;
+use App\Models\Caja;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Models\Cliente;
-
 
 class ClienteAdminController extends Controller
 {
-    public function show($id)
+    /**
+     * Muestra el panel TPV (detalles y pedidos) de una mesa ocupada.
+     */
+    public function show(Mesa $mesa)
     {
-        // 1. Buscamos la mesa
-        $mesa = Mesa::findOrFail($id);
+        try {
+            // 1. Buscamos la sesión activa
+            $sesionActiva = $mesa->sesiones()
+                ->whereIn('estado', ['activa', 'solicitando_cuenta'])
+                ->latest()
+                ->first();
 
-        // 2. Buscamos la sesión activa (la que se está usando ahora mismo)
-        $sesionActiva = $mesa->sesiones()->latest()->first();
+            if (!$sesionActiva) {
+                return redirect()->route('admin.mesas')->with('error', "La Mesa {$mesa->numero} está libre actualmente.");
+            }
 
-        // Si por algún error intentan entrar a una mesa libre, los devolvemos
-        if (!$sesionActiva) {
-            return redirect()->route('admin.inicio')->with('error', 'Esa mesa está libre actualmente.');
-        }
+            // 2. Recuperamos pedidos
+            $pedidos = Pedido::with('platos', 'cliente')
+                ->where('sesion_id', $sesionActiva->id)
+                ->orderBy('ronda', 'desc')
+                ->get();
 
-        // 3. Recuperamos todos los pedidos de esta sesión CON sus platos
-        $pedidos = Pedido::with('platos')
-            ->where('sesion_id', $sesionActiva->id)
-            ->orderBy('ronda', 'desc')
-            ->get();
+            // 3. AGRUPAMOS Y MAPEAMOS (Eliminé el duplicado que tenías)
+            $pedidosAgrupados = $pedidos->groupBy(function ($pedido) {
+                // EXORCISMO 1: Usamos ?-> para evitar que explote si el cliente es null
+                return $pedido->cliente?->nombre ?? 'Anónimo';
+            })->map(function ($pedidosDelCliente) {
 
-        // 4. Mandamos todo a la vista del TPV
-        return view('admin.detalles-mesa', compact('mesa', 'sesionActiva', 'pedidos'));
-    }
-    public function desocupar($id)
-    {
-        // 1. Encontramos la mesa
-        $mesa = Mesa::findOrFail($id);
+                $totalPersona = $pedidosDelCliente->sum(function ($pedido) {
+                    return $pedido->platos->sum(function ($plato) {
+                        // EXORCISMO 2: Validamos que exista el pivot y la cantidad por seguridad
+                        $cantidad = $plato->pivot->cantidad ?? 1;
+                        return $plato->precio * $cantidad;
+                    });
+                });
 
-        // 2. Buscamos SU sesión actual (la que está 'activa')
-        $sesionActiva = $mesa->sesiones()->where('estado', 'activa')->first();
+                return [
+                    'historial_pedidos' => $pedidosDelCliente,
+                    'total_euros' => $totalPersona,
+                    'cantidad_rondas' => $pedidosDelCliente->count()
+                ];
+            });
 
-        // 3. Si hay sesión, la cerramos con la palabra EXACTA
-        if ($sesionActiva) {
-            $sesionActiva->update([
-                'estado' => 'cerrada'
+            // 4. Calculamos total mesa global
+            $totalMesa = $pedidos->sum(function ($pedido) {
+                return $pedido->platos->sum(function ($plato) {
+                    $cantidad = $plato->pivot->cantidad ?? 1;
+                    return $plato->precio * $cantidad;
+                });
+            });
+
+            $cajas = Caja::where('activa', true)->get();
+
+            return view('admin.detalles-mesa', [
+                'mesa' => $mesa,
+                'sesionActiva' => $sesionActiva,
+                'pedidosAgrupados' => $pedidosAgrupados,
+                'pedidos' => $pedidos,
+                'totalMesa' => $totalMesa,
+                'cajas' => $cajas,
             ]);
+
+            // Cambié \Exception por \Throwable para atrapar errores fatales de PHP 8 (como los null pointer)
+        } catch (\Throwable $e) {
+            Log::error("Error al cargar TPV de la mesa {$mesa->id}: " . $e->getMessage());
+            return redirect()->route('admin.mesas')->with('error', 'Ocurrió un error al cargar los detalles de la mesa.');
         }
-        return redirect()->route('admin.mesas')->with('success', 'Mesa' . $mesa->numero . ' cobrada y desocupada.');
     }
+
+    /**
+     * Cobra y cierra la sesión actual de la mesa, dejándola libre.
+     */
+    public function desocupar(Mesa $mesa)
+    {
+        try {
+            // 1. Buscamos SU sesión actual en curso
+            $sesionActiva = $mesa->sesiones()
+                ->whereIn('estado', ['activa', 'solicitando_cuenta'])
+                ->first();
+
+            if (!$sesionActiva) {
+                return redirect()->route('admin.mesas')->with('warning', 'La mesa ya se encontraba libre.');
+            }
+
+            // 2. Transacción: Ideal por si en el futuro decides generar la factura PDF justo aquí
+            DB::transaction(function () use ($sesionActiva) {
+                $sesionActiva->update([
+                    'estado' => 'cerrada'
+                ]);
+            });
+
+            return redirect()->route('admin.mesas')->with('success', "Mesa {$mesa->numero} cobrada y desocupada.");
+
+        } catch (\Exception $e) {
+            Log::error("Error al desocupar la mesa {$mesa->id}: " . $e->getMessage());
+            return back()->with('error', 'Hubo un problema al intentar desocupar la mesa.');
+        }
+    }
+
+    /**
+     * Carga el contenido parcial de las mesas libres (ideal para modales o peticiones AJAX).
+     */
     public function listaMesasLibres()
     {
-        // Traemos SOLO las mesas que NO tengan sesiones activas o pidiendo cuenta
-        $mesasLibres = Mesa::whereDoesntHave('sesiones', function ($query) {
-            $query->whereIn('estado', ['activa', 'solicitando_cuenta']);
-        })->get();
+        try {
+            // Traemos SOLO las mesas que NO tengan sesiones activas o pidiendo cuenta
+            $mesasLibres = Mesa::whereDoesntHave('sesiones', function ($query) {
+                $query->whereIn('estado', ['activa', 'solicitando_cuenta']);
+            })->get();
 
-        // Mandamos los datos a la vista
-        return view('admin.modals.listaMesasLibres', compact('mesasLibres'));
+            return view('admin.modals.listaMesasLibres', compact('mesasLibres'));
+
+        } catch (\Exception $e) {
+            Log::error('Error al cargar modal de mesas libres: ' . $e->getMessage());
+            // Como esto probablemente se cargue en un modal/AJAX, devolver un error amigable
+            return response()->view('errors.minimal', ['message' => 'Error al cargar las mesas'], 500);
+        }
     }
 
 
+    public function notificaciondecuenta()
+    {
 
-
-
+    }
 }

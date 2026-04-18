@@ -3,102 +3,106 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ProductosPago;
 use Illuminate\Http\Request;
 use App\Models\Categorias;
 use App\Models\Plato;
-use App\Http\Requests\Admin\storeCategoriaRequest;
-use App\Http\Requests\Admin\storePlatoRequest;
+use App\Http\Requests\Admin\StorePlatoRequest;
+use Illuminate\Support\Facades\Log;
 
 class PlatoAdminController extends Controller
 {
+    /**
+     * Carga la vista principal de la carta.
+     */
     public function index()
     {
-
-        $categorias = Categorias::with('platos')->get();
-        return view('admin.platos', compact('categorias'));
-    }
-
-    public function toggleActivo($id)
-    {
-        $plato = Plato::findOrFail($id);
-
-        // Invertimos el estado (si estaba activado se desactiva, y viceversa)
-        $plato->activo = !$plato->activo;
-        $plato->save();
-
-        // Creamos un mensaje dinámico para saber qué ha pasado
-        $mensaje = $plato->activo ? 'Plato activado y visible en la app.' : 'Plato ocultado de la app.';
-
-        return back()->with('success', $mensaje);
-    }
-
-    // --- GESTIÓN DE CATEGORÍAS ---
-
-    public function storeCategoria(storeCategoriaRequest $request)
-    {
-
-        Categorias::create([
-            'nombre' => $request->nombre,
-            'orden' => $request->orden
-        ]);
-
-        return back()->with('success', 'Categoría creada correctamente.');
-    }
-
-    public function eliminarCategoria($id)
-    {
-        $categoria = Categorias::findOrFail($id);
-
-        // Doble seguridad: Por si intentan saltarse el bloqueo de HTML
-        if ($categoria->platos()->count() > 0) {
-            return back()->with('error', 'No puedes eliminar una categoría que contiene platos.');
+        try {
+            $categorias = Categorias::with('platos')->get();
+            return view('admin.platos', compact('categorias'));
+        } catch (\Exception $e) {
+            Log::error('Error cargando la vista de la carta: ' . $e->getMessage());
+            return back()->with('error', 'Ocurrió un error al cargar la carta.');
         }
-
-        $categoria->delete();
-
-        return back()->with('success', 'Categoría eliminada.');
     }
 
-    public function storePlato(storePlatoRequest $request)
+    /**
+     * Guarda un nuevo plato con su imagen.
+     */
+    public function store(StorePlatoRequest $request)
     {
-        $rutaImagen = null;
+        try {
+            $rutaImagen = null;
+            if ($request->hasFile('imagen')) {
+                $rutaImagen = $request->file('imagen')->store('platos', 'public');
+            }
 
-        if ($request->hasFile('imagen')) {
-            $rutaImagen = $request->file('imagen')->store('platos', 'public');
+            Plato::create([
+                'nombre' => $request->nombre,
+                'categoria_id' => $request->categoria_id,
+                'descripcion' => $request->descripcion,
+                'precio' => $request->precio,
+                'imagen' => $rutaImagen,
+                'activo' => true
+            ]);
+
+            return back()->with('success', '¡Plato añadido a la carta con éxito!');
+        } catch (\Exception $e) {
+            Log::error('Error al guardar plato: ' . $e->getMessage());
+            return back()->with('error', 'Hubo un problema al añadir el plato.');
         }
-
-        Plato::create([
-            'nombre' => $request->nombre,
-            'categoria_id' => $request->categoria_id,
-            'descripcion' => $request->descripcion,
-            'imagen' => $rutaImagen,
-            'activo' => true
-        ]);
-
-        return back()->with('success', '¡Plato añadido a la carta con éxito!');
     }
 
-    public function destroy($id)
+    public function destroy(Plato $plato)
     {
-        $plato = Plato::findOrFail($id);
-        $plato->delete();
-        return response()->json([
-            'success' => true,
-            'message' => 'Plato eliminado correctamente'
-        ]);
+        try {
+            $plato->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Plato eliminado correctamente'
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Error al eliminar plato {$plato->id}: " . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Error al eliminar el plato'], 500);
+        }
     }
 
-    public function reactivarPlato($id)
+    // --- ACCIONES PERSONALIZADAS ---
+
+    /**
+     * Activa o desactiva la visibilidad de un plato en la app.
+     */
+    public function toggleActivo(Plato $plato)
     {
-        $plato = Plato::findOrFail($id);
-        
-        $plato->activo = true; // Lo volvemos a encender
-        $plato->save();
+        try {
+            $plato->activo = !$plato->activo;
+            $plato->save();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Plato reactivado correctamente'
-        ]);
+            $mensaje = $plato->activo ? 'Plato activado y visible en la app.' : 'Plato ocultado de la app.';
+            return back()->with('success', $mensaje);
+        } catch (\Exception $e) {
+            Log::error("Error alternando visibilidad del plato {$plato->id}: " . $e->getMessage());
+            return back()->with('error', 'No se pudo actualizar el estado del plato.');
+        }
     }
 
+    /**
+     * Reactiva un plato (Llamada AJAX).
+     */
+    public function reactivar(Plato $plato)
+    {
+        try {
+            $plato->activo = true;
+            $plato->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Plato reactivado correctamente'
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Error reactivando plato {$plato->id}: " . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Error al reactivar el plato'], 500);
+        }
+    }
 }

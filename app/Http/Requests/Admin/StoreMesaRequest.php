@@ -23,7 +23,7 @@ class StoreMesaRequest extends FormRequest
     {
         return [
             'numero' => 'required|integer|min:1|unique:mesas,numero',
-            'capacidad' => 'required|integer|min:1',
+            'capacidad' => 'required|integer|min:1|max:20',
         ];
     }
 
@@ -34,6 +34,10 @@ class StoreMesaRequest extends FormRequest
             'numero.integer' => 'El número de la mesa debe ser un número entero.',
             'numero.min' => 'El número de la mesa debe ser mayor o igual a 1.',
             'numero.unique' => 'La mesa ya existe.',
+            'capacidad.required' => 'La capacidad de la mesa es obligatoria.',
+            'capacidad.integer' => 'La capacidad de la mesa debe ser un número entero.',
+            'capacidad.min' => 'La capacidad de la mesa debe ser mayor o igual a 1.',
+            'capacidad.max' => 'La capacidad de la mesa debe ser menor o igual a 20.',
         ];
     }
 }

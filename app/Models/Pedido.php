@@ -27,16 +27,17 @@ class Pedido extends Model
     }
 
     // Relación Muchos a Muchos con Platos
+    // app/Models/Pedido.php
     public function platos()
     {
-        // Igual que en el modelo Plato, conectamos a través de la tabla intermedia
         return $this->belongsToMany(Plato::class, 'pedido_platos')
             ->withPivot('cantidad');
     }
-
     public function detalles()
     {
         return $this->hasMany(PedidoPlato::class);
     }
+    // app/Models/Pedido.php
+
 
 }

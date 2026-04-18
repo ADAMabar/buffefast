@@ -8,7 +8,7 @@ class Mesa extends Model
 {
     protected $table = 'mesas';
 
-    protected $fillable = ['numero'];
+    protected $fillable = ['numero', 'capacidad'];
 
     public function sesiones()
     {

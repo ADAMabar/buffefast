@@ -112,6 +112,249 @@
             background-color: rgba(239, 68, 68, 0.2);
             color: #b91c1c;
         }
+
+        /* =================================================================
+        RETOQUES ESPECIALES PARA EL HISTORIAL DE VENTAS
+        ================================================================= */
+        :root {
+            --bf-orange: #FF7A00;
+            --bf-orange-soft: rgba(255, 122, 0, .1);
+            --bf-dark: #111827;
+            --bf-card-radius: 16px;
+        }
+
+        /* ── Stat cards ── */
+        .stat-card {
+            border-radius: var(--bf-card-radius);
+            border: 1px solid #E5E7EB;
+            background: #fff;
+            transition: transform .15s, box-shadow .15s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .07) !important;
+        }
+
+        .stat-card__accent {
+            width: 4px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .stat-card__label {
+            font-size: .7rem;
+            font-weight: 800;
+            letter-spacing: .07em;
+            text-transform: uppercase;
+            color: #9CA3AF;
+            margin-bottom: .25rem;
+        }
+
+        .stat-card__value {
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: #111827;
+            line-height: 1;
+            margin-bottom: .2rem;
+        }
+
+        .stat-card__sub {
+            font-size: .76rem;
+            color: #6B7280;
+        }
+
+        /* ── Pills de período ── */
+        .pill-filter {
+            cursor: pointer;
+            border-radius: 50rem;
+            border: 1.5px solid #E5E7EB;
+            padding: .35rem 1rem;
+            font-size: .8rem;
+            font-weight: 700;
+            background: #fff;
+            color: #374151;
+            transition: all .15s;
+            white-space: nowrap;
+        }
+
+        .pill-filter:hover {
+            border-color: #374151;
+            background: #F9FAFB;
+        }
+
+        .pill-filter.active {
+            background: #111827;
+            color: #fff;
+            border-color: #111827;
+        }
+
+        /* ── Gráfica barras ── */
+        .chart-wrap {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 100px;
+        }
+
+        .chart-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .chart-bar {
+            width: 100%;
+            border-radius: 4px 4px 0 0;
+            min-height: 3px;
+            background: linear-gradient(to top, #111827 0%, #374151 100%);
+            transition: height .35s cubic-bezier(.34, 1.4, .64, 1);
+        }
+
+        .chart-bar.active {
+            background: linear-gradient(to top, var(--bf-orange) 0%, #ffaa55 100%);
+        }
+
+        .chart-bar:hover {
+            opacity: .8;
+        }
+
+        .chart-label {
+            font-size: .58rem;
+            color: #9CA3AF;
+            white-space: nowrap;
+        }
+
+        /* ── Barra método de pago ── */
+        .metodo-strip {
+            height: 5px;
+            background: #F3F4F6;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: .2rem;
+        }
+
+        .metodo-strip__fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width .4s;
+        }
+
+        /* ── Tabla ── */
+        .h-table thead th {
+            font-size: .68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: #9CA3AF;
+            background: #F9FAFB;
+            border-bottom: 1px solid #E5E7EB;
+            padding: .75rem 1rem;
+            white-space: nowrap;
+        }
+
+        .h-table tbody td {
+            padding: .8rem 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid #F3F4F6;
+            font-size: .88rem;
+        }
+
+        .h-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .ticket-row {
+            cursor: pointer;
+        }
+
+        .ticket-row:hover td {
+            background: #FAFAFA;
+        }
+
+        /* ── Badges de método ── */
+        .badge-efectivo {
+            background: #d1fae5;
+            color: #065f46;
+            border-radius: 50rem;
+            padding: .28rem .75rem;
+            font-size: .72rem;
+            font-weight: 700;
+        }
+
+        .badge-tarjeta {
+            background: #dbeafe;
+            color: #1e40af;
+            border-radius: 50rem;
+            padding: .28rem .75rem;
+            font-size: .72rem;
+            font-weight: 700;
+        }
+
+        .badge-bizum {
+            background: #ede9fe;
+            color: #5b21b6;
+            border-radius: 50rem;
+            padding: .28rem .75rem;
+            font-size: .72rem;
+            font-weight: 700;
+        }
+
+        .badge-transferencia {
+            background: #fef3c7;
+            color: #92400e;
+            border-radius: 50rem;
+            padding: .28rem .75rem;
+            font-size: .72rem;
+            font-weight: 700;
+        }
+
+        .badge-anulada {
+            background: #fee2e2;
+            color: #991b1b;
+            border-radius: 50rem;
+            padding: .2rem .6rem;
+            font-size: .66rem;
+            font-weight: 800;
+        }
+
+        /* ── Variación ── */
+        .var-up {
+            background: rgba(16, 185, 129, .1);
+            color: #065f46;
+            border-radius: 50rem;
+            padding: .15rem .6rem;
+            font-size: .75rem;
+            font-weight: 700;
+        }
+
+        .var-down {
+            background: rgba(239, 68, 68, .1);
+            color: #991b1b;
+            border-radius: 50rem;
+            padding: .15rem .6rem;
+            font-size: .75rem;
+            font-weight: 700;
+        }
+
+        /* ── Animaciones ── */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .anim {
+            animation: fadeUp .3s ease both;
+        }
     </style>
 </head>
 
@@ -133,7 +376,7 @@
             <a href="{{ route('admin.platos.index') }}" class="nav-link-admin">
                 <i class="bi bi-journal-richtext"></i> Menú de Platos
             </a>
-            <a href="#" class="nav-link-admin">
+            <a href="{{ route('admin.historial') }}" class="nav-link-admin">
                 <i class="bi bi-graph-up-arrow"></i> Historial / Ventas
             </a>
             <a href="{{ route('admin.configuracion.index') }}" class="nav-link-admin">

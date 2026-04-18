@@ -31,6 +31,12 @@
                             <p class="small text-muted mb-0 text-truncate" style="font-size: 0.75rem;">
                                 {{ $plato->descripcion ?? 'Delicioso sushi' }}
                             </p>
+                            <br>
+
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-success rounded-pill">{{ $plato->precio }} €</span>
+                            </div>
 
                             <form action="{{ route('cliente.carrito.add', $plato->id) }}" method="POST">
                                 @csrf

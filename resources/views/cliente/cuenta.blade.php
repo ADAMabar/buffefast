@@ -48,6 +48,9 @@
                                     </li>
                                 @endforeach
                             </ul>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-success rounded-pill">{{ $plato->precio }} €</span>
+                            </div>
                             <div class="text-end mt-2">
                                 <small class="text-muted">{{ $pedido->created_at->format('H:i') }}</small>
                             </div>

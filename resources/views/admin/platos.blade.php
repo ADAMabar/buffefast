@@ -93,11 +93,7 @@
                     @if($categoria->platos->isEmpty())
                         <p class="text-muted fst-italic text-center mb-0 pt-4">No hay platos en esta categoría.</p>
                     @else
-                        {{--
-                            Fluid grid: fills columns as wide as possible,
-                            min 260px → grows up to 1fr.
-                            On very narrow screens (< ~560px) cards become single-column.
-                        --}}
+                   
                         <div class="pt-4" style="
                             display: grid;
                             grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
@@ -157,6 +153,9 @@
                                                        line-height: 1.5;">
                                                 {{ $plato->descripcion ?? 'Sin descripción.' }}
                                             </p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="badge bg-success rounded-pill">{{ $plato->precio }} €</span>
+                                            </div>
                                         </div>
 
                                         {{-- Card footer: toggle + actions --}}

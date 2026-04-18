@@ -1,55 +1,75 @@
 <?php
+
 namespace App\Http\Controllers\Cliente;
 
-use App\Models\Sesion;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\Cliente\AccesoClienteRequest;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Sesion;
 use App\Models\Cliente;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Services\MesaAccesoService;
+
 
 class ClienteAuthController extends Controller
 {
-    public function mostrarIngreso()
-    {
-        // Si el cliente ya tiene una sesión activa en su navegador, lo mandamos a la carta
-        if (session()->has('sesion_id')) {
-            return redirect()->route('cliente.carta');
-        }
+    /**
+     * Muestra la pantalla de ingreso (código QR / PIN).
+     */
+    // Esto va dentro de la clase, arriba de todo
 
-        return view('cliente.acceso');
+    public function create()
+    {
+        try {
+            // Si el cliente ya tiene una sesión activa en su navegador, lo mandamos a la carta
+            if (session()->has('sesion_id')) {
+                return redirect()->route('cliente.carta');
+            }
+
+            // Usamos 'cliente.ingreso' asumiendo que es el nombre de tu vista Blade
+            return view('cliente.ingreso');
+
+        } catch (\Exception $e) {
+            Log::error('Error al cargar la vista de acceso cliente: ' . $e->getMessage());
+            return response()->view('errors.minimal', ['message' => 'Error al cargar la página'], 500);
+        }
     }
 
-    public function acceder(AccesoClienteRequest $request)
+
+
+    public function store(AccesoClienteRequest $request, MesaAccesoService $mesaAccesoService)
     {
+        try {
 
-        // Buscamos una sesión activa que coincida con el código
-        $sesion = Sesion::where('codigo', $request->codigo)
-            ->where('estado', 'activa')
-            ->first();
+            $cliente = $mesaAccesoService->unirse($request->codigo, $request->nombre);
 
-        if ($sesion) {
-            $cliente = Cliente::create([
-                'nombre' => $request->nombre,
-                'sesion_id' => $sesion->id
-            ]);
 
-            // Guardamos el ID de la sesión y del cliente en el navegador
             session([
-                'sesion_id' => $sesion->id,
-                'cliente_id' => $cliente->id
+                'sesion_id' => $cliente->sesion_id,
+                'cliente_id' => $cliente->id,
+                'nombre' => $cliente->nombre,
             ]);
 
-            return redirect()->route('cliente.carta');
+            return redirect()->route('cliente.carta')->with('success', "¡Bienvenido, {$cliente->nombre}!");
+
+        } catch (\Exception $e) {
+            return back()->withErrors(['codigo' => $e->getMessage()])->onlyInput('codigo', 'nombre');
         }
-        return back()->withErrors([
-            'codigo' => 'Código inválido o sesión finalizada. Consulta con el camarero.',
-        ])->onlyInput('codigo', 'nombre');
     }
 
-    public function logout(Request $request)
+    /**
+     * Elimina los datos del navegador del cliente .
+     */
+    public function destroy(Request $request)
     {
-        $request->session()->forget(['sesion_id', 'cliente_id', 'carrito', 'carrito_count']);
-        return redirect()->route('cliente.inicio');
+        try {
+            $request->session()->forget(['sesion_id', 'cliente_id', 'carrito', 'carrito_count']);
+
+            return redirect()->route('cliente.inicio');
+        } catch (\Exception $e) {
+            Log::error('Error al cerrar sesión del cliente local: ' . $e->getMessage());
+            return redirect()->route('cliente.inicio');
+        }
     }
 }

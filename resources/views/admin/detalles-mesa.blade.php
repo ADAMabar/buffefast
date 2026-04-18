@@ -27,12 +27,11 @@
                 </button>
             </form>
 
-            <form action="{{ route('admin.mesa.desocupar', $mesa->id) }}" method="POST">
-                @csrf
-                <button class="btn btn-danger fw-bold shadow-sm rounded-pill px-4 py-2">
-                    <i class="bi bi-cash-stack me-1"></i> Cobrar
-                </button>
-            </form>
+
+            <button type="button" class="btn btn-success fw-bold px-4 fs-5" data-bs-toggle="modal"
+                data-bs-target="#modalCobrar">
+                <i class="bi bi-cash-coin me-2"></i>Cobrar Mesa
+            </button>
         </div>
     </div>
 
@@ -40,8 +39,9 @@
         <div class="col-12 col-md-4">
             <div class="card border-0 bg-primary text-white shadow-sm rounded-4 h-100 p-2">
                 <div class="card-body">
-                    <h6 class="text-white-50 fw-bold mb-1"><i class="bi bi-arrow-repeat me-1"></i> Rondas Pedidas</h6>
-                    <h2 class="fw-bold mb-0">{{ $pedidos->count() }}</h2>
+                    <h6 class="text-white-50 fw-bold mb-1"><i class="bi bi-arrow-repeat me-1"></i> numero de personas
+                    </h6>
+                    <h2 class="fw-bold mb-0">{{ $sesionActiva->clientes()->count() }}</h2>
                 </div>
             </div>
         </div>
@@ -53,6 +53,16 @@
                         {{ $pedidos->sum(function ($pedido) {
     return $pedido->platos->sum('pivot.cantidad'); }) }}
                     </h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card border-0 bg-dark text-white shadow-sm rounded-4 h-100 p-2">
+                <div class="card-body">
+                    <h6 class="text-white-50 fw-bold mb-1"><i class="bi bi-currency-euro"></i>Total extras no
+                        incluidos en el buffet
+                    </h6>
+                    <h2 class="fw-bold mb-0">{{ $totalMesa}}</h2>
                 </div>
             </div>
         </div>
@@ -84,37 +94,61 @@
                 </div>
             @else
                 <div class="row g-4">
-                    @foreach($pedidos as $pedido)
-                        <div class="col-12 col-md-6 col-xl-4">
-                            <div
-                                class="card h-100 border-2 shadow-sm @if($pedido->estado == 'pendiente') border-warning @else border-success opacity-75 @endif rounded-4">
+                    @foreach($pedidosAgrupados as $nombreCliente => $datosCliente)
 
-                                <div
-                                    class="card-header bg-white d-flex justify-content-between align-items-center border-bottom-0 pt-3">
-                                    <span class="fw-bold fs-5">Ronda {{ $pedido->ronda }}</span>
-                                    <span
-                                        class="badge rounded-pill @if($pedido->estado == 'pendiente') bg-warning text-dark @else bg-success @endif">
-                                        {{ strtoupper($pedido->estado) }}
+                        <div class="mb-5">
+                            <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-person-circle fs-3 text-primary me-2"></i>
+                                    <h4 class="fw-bold mb-0">{{ $nombreCliente }}</h4>
+                                    <span class="badge bg-secondary ms-3 rounded-pill">
+                                        {{ $datosCliente['cantidad_rondas'] }} rondas
                                     </span>
                                 </div>
 
-                                <div class="card-body p-3">
-                                    <ul class="list-group list-group-flush">
-                                        @foreach($pedido->platos as $plato)
-                                            <li
-                                                class="list-group-item d-flex justify-content-between align-items-center px-2 py-2 border-0 bg-transparent">
-                                                <span>
-                                                    <span class="fw-bold text-primary me-2">{{ $plato->pivot->cantidad }}x</span>
-                                                    {{ $plato->nombre }}
-                                                </span>
-                                            </li>
-                                        @endforeach
-                                    </ul>
+                                <div
+                                    class="bg-success bg-opacity-10 px-3 py-2 rounded-3 border border-success border-opacity-25">
+                                    <span class="text-success small fw-bold text-uppercase me-1">Total:</span>
+                                    <span
+                                        class="fs-4 fw-bold text-success">{{ number_format($datosCliente['total_euros'], 2, ',', '.') }}
+                                        €</span>
                                 </div>
+                            </div>
 
-                                <div class="card-footer bg-white border-top-0 pb-3 px-3 text-end text-muted small">
-                                    <i class="bi bi-clock me-1"></i> Pedido a las {{ $pedido->created_at->format('H:i') }}
-                                </div>
+                            <div class="row g-4 ps-3 border-start border-3 border-primary border-opacity-25">
+
+                                @foreach($datosCliente['historial_pedidos'] as $pedido)
+                                    <div class="col-12 col-md-6 col-xl-4">
+                                        <div
+                                            class="card h-100 border-2 shadow-sm @if($pedido->estado == 'pendiente') border-warning @else border-success opacity-75 @endif rounded-4">
+                                            <div
+                                                class="card-header bg-white d-flex justify-content-between align-items-center border-bottom-0 pt-3">
+                                                <span class="fw-bold fs-5">Ronda #{{ $pedido->ronda }}</span>
+                                                <span
+                                                    class="badge rounded-pill @if($pedido->estado == 'pendiente') bg-warning text-dark @else bg-success @endif">
+                                                    {{ strtoupper($pedido->estado) }}
+                                                </span>
+                                            </div>
+                                            <div class="card-body p-3">
+                                                <ul class="list-group list-group-flush">
+                                                    @foreach($pedido->platos as $plato)
+                                                        <li
+                                                            class="list-group-item d-flex justify-content-between align-items-center px-2 py-2 border-0 bg-transparent">
+                                                            <span>
+                                                                <span
+                                                                    class="fw-bold text-primary me-2">{{ $plato->pivot->cantidad }}x</span>
+                                                                {{ $plato->nombre }}
+                                                            </span>
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                            <div class="card-footer bg-white border-top-0 pb-3 px-3 text-end text-muted small">
+                                                <i class="bi bi-clock me-1"></i> {{ $pedido->created_at->format('H:i') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
 
                             </div>
                         </div>
@@ -124,4 +158,5 @@
         </div>
     </div>
 
+    @include('admin.modals.cobrar-mesa')
 </x-layouts.admin>

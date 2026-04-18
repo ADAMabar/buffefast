@@ -15,9 +15,19 @@
             <span class="badge rounded-pill bg-white text-warning border px-3 py-2 me-2">
                 <i class="bi bi-circle-fill me-1 small"></i> Ocupadas
             </span>
-            <span class="badge rounded-pill bg-white text-danger border px-3 py-2">
-                <i class="bi bi-circle-fill me-1 small"></i> Cuenta
-            </span>
+
+            <button type="button" class="btn btn-warning position-relative font-weight-bold" data-bs-toggle="modal"
+                data-bs-target="#modalPidiendoCuenta">
+                🧾 Mesas pidiendo la cuenta
+
+                @if($mesasPidiendoCuenta->count() > 0)
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {{ $mesasPidiendoCuenta->count() }}
+                        <span class="visually-hidden">mesas esperando</span>
+                    </span>
+                @endif
+            </button>
+
         </div>
     </div>
     <div class="d-flex gap-2 mb-4">
@@ -37,7 +47,10 @@
             @foreach($mesas as $mesa)
                 @php
                     // Determinar el estado actual de la mesa
-                    $sesionActiva = $mesa->sesiones->first();
+                    $sesionActiva = $mesa->sesiones()
+                        ->whereIn('estado', ['activa', 'solicitando_cuenta'])
+                        ->latest()
+                        ->first();
                     $estado = 'libre';
                     $color = '#10B981'; // Verde
 
@@ -112,4 +125,5 @@
         @include('admin.modals.gestion-mesas')
         @include('admin.modals.agregar-mesa')
         @include('admin.modals.listaMesasLibres')
+        @include('admin.modals.listaMesasPidenCuenta')
 </x-layouts.admin>

@@ -7,7 +7,7 @@ class Plato extends Model
 {
     protected $table = 'platos';
     protected $primaryKey = 'id';
-    protected $fillable = ['nombre', 'descripcion', 'categoria_id', 'imagen', 'activo'];
+    protected $fillable = ['nombre', 'descripcion', 'categoria_id', 'precio', 'imagen', 'activo'];
     public $timestamps = true;
     protected $casts = [
         'activo' => 'boolean',

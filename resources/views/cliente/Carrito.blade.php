@@ -19,6 +19,9 @@
         @else
             <div class="d-flex flex-column gap-3">
                 @foreach($carrito as $id => $item)
+                    @if(empty($id))
+                        @continue
+                    @endif
                     <div class="card border-0 shadow-sm rounded-4">
                         <div class="card-body p-2 d-flex align-items-center">
                             <img src="{{ $item['imagen'] ?? 'https://placehold.co/100x100/eeeeee/A3A8B8?text=🍣' }}"
@@ -33,7 +36,7 @@
                             </div>
 
                             <div class="pe-2">
-                                <form action="{{ route('cliente.carrito.remove', $id) }}" method="POST">
+                                <form action="{{ route('cliente.carrito.destroy', ['id' => $id]) }}" method="POST">
                                     @csrf <button type="submit" class="btn btn-sm text-danger border-0">
                                         <i class="bi bi-trash fs-5"></i>
                                     </button>

@@ -16,7 +16,7 @@
                 <label for="email" class="form-label small ms-1 fw-medium" style="color: var(--text-main);">Correo
                     Electrónico</label>
                 <input type="email" class="form-control form-control-2026" id="email" name="email"
-                    placeholder="admin@buffefast.com" required autofocus>
+                    placeholder="admin@buffefast.com" value="{{ old('email') }}" autofocus>
                 @error('email')
                     <div class="text-danger small mt-1 ms-1">{{ $message }}</div>
                 @enderror
