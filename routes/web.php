@@ -26,6 +26,12 @@ use App\Http\Controllers\Admin\HistorialVentasController;
 
 Route::get('/', [ClienteAuthController::class, 'create'])->name('cliente.inicio');
 
+// Si el usuario copia y pega la URL (GET), lo mandamos de vuelta al inicio
+Route::get('/acceder', function () {
+    return redirect()->route('cliente.inicio')->with('error', 'Por favor, inicia sesión usando el formulario.');
+});
+
+// Tu ruta original que procesa el formulario (POST)
 Route::post('/acceder', [ClienteAuthController::class, 'store'])->name('cliente.acceder');
 Route::get('/logout-cliente', [ClienteAuthController::class, 'destroy'])->name('cliente.logout');
 
@@ -36,7 +42,7 @@ Route::get('/carrito', [CarritoController::class, 'index'])->name('cliente.carri
 Route::post('/carrito/add/{id}', [CarritoController::class, 'store'])->name('cliente.carrito.add');
 Route::post('/carrito/destroy/{id}', [CarritoController::class, 'destroy'])->name('cliente.carrito.destroy');
 Route::post('/carrito/confirmar', [CarritoController::class, 'confirmar'])->name('cliente.carrito.confirmar');
-
+Route::get('/nosotros', [CuentaController::class, 'indexSobreNosotros'])->name('cliente.nosotros');
 
 /*
 |--------------------------------------------------------------------------
@@ -112,33 +118,27 @@ Route::middleware('auth')->group(function () {
     // ==========================================
     // MÓDULO DE CONFIGURACIÓN Y PERSONAL
     // ==========================================
-    Route::middleware(['auth'])->group(function () {
-        //
-//     // Panel de configuración (GET)
-        Route::get('/admin/configuracion', [ConfiguracionAdminController::class, 'index'])
-            ->name('admin.configuracion.index');
-        //
-        // Guardar ajustes del form global (POST)
-        Route::post('/admin/configuracion/ajustes', [ConfiguracionAdminController::class, 'updateAjustes'])
-            ->name('admin.configuracion.ajustes');
+Route::middleware(['auth'])->group(function () {
+    // Panel de configuración (GET)
+    Route::get('/admin/configuracion', [ConfiguracionAdminController::class, 'index'])
+        ->name('admin.configuracion.index');
 
-        //     // Modo pánico AJAX (POST → devuelve JSON)
-        Route::post('/admin/configuracion/panico', [ConfiguracionAdminController::class, 'togglePanico'])
-            ->name('admin.configuracion.panico');
-        //
-//     // Restaurar valores de fábrica (POST)
-        Route::post('/admin/configuracion/resetear', [ConfiguracionAdminController::class, 'resetearDefecto'])
-            ->name('admin.configuracion.resetear');
-        //
-//     // Crear empleado (POST)
-        Route::post('/admin/configuracion/empleado', [ConfiguracionAdminController::class, 'storeEmpleado'])
-            ->name('admin.configuracion.empleado.store');
-        //
-//     // Eliminar empleado (DELETE, usa Route Model Binding)
-        Route::delete('/admin/configuracion/empleado/{empleado}', [ConfiguracionAdminController::class, 'destroyEmpleado'])
-            ->name('admin.configuracion.empleado.destroy');
-        //
-    });
+    // Guardar ajustes del form global (POST)
+    Route::post('/admin/configuracion/ajustes', [ConfiguracionAdminController::class, 'updateAjustes'])
+        ->name('admin.configuracion.ajustes');
+
+    // Restaurar valores de fábrica (POST)
+    Route::post('/admin/configuracion/resetear', [ConfiguracionAdminController::class, 'resetearDefecto'])
+        ->name('admin.configuracion.resetear');
+
+    // Crear empleado (POST)
+    Route::post('/admin/configuracion/empleado', [ConfiguracionAdminController::class, 'storeEmpleado'])
+        ->name('admin.configuracion.empleado.store');
+
+    // Eliminar empleado (DELETE, usa Route Model Binding)
+    Route::delete('/admin/configuracion/empleado/{empleado}', [ConfiguracionAdminController::class, 'destroyEmpleado'])
+        ->name('admin.configuracion.empleado.destroy');
+});
 
 
     // ============================================================

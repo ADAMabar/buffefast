@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 class Configuracion extends Model
 {
     protected $table = 'configuracion';
-    protected $fillable = ['clave', 'valor'];
-    public $timestamps = false;
+    
+    protected $fillable = ['clave', 'valor', 'seccion', 'tipo','descripcion','opciones'];
+    
+   
 }

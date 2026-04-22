@@ -16,22 +16,22 @@ class CuentaController extends Controller
     public function index()
     {
         try {
-            // 1. Verificamos que haya una sesión en la memoria del móvil antes de buscar en BD
+            // Verificamos que haya una sesión en la memoria del móvil antes de buscar en BD
             $sesion_id = session('sesion_id');
             if (!$sesion_id) {
                 return redirect()->route('cliente.inicio')->with('error', 'Tu sesión ha caducado.');
             }
 
-            // 2. Traemos la sesión y su mesa en UNA SOLA consulta (Eager Loading)
+            // Traemos la sesión y su mesa en UNA SOLA consulta (Eager Loading)
             $sesion = Sesion::with('mesa')->find($sesion_id);
 
-            // 3. EL GUARDIA: Si no existe en BD o el admin la cerró, lo expulsamos
+            //  EL GUARDIA: Si no existe en BD o el admin la cerró, lo expulsamos
             if (!$sesion || $sesion->estado === 'cerrada') {
                 session()->forget(['sesion_id', 'cliente_id', 'carrito', 'carrito_count']);
                 return redirect()->route('cliente.inicio')->with('error', 'Tu mesa ha sido cerrada y cobrada. ¡Gracias por tu visita!');
             }
 
-            // 4. Traemos el historial de pedidos de esta sesión
+            //  Traemos el historial de pedidos de esta sesión
             $pedidos = Pedido::with('platos')
                 ->where('sesion_id', $sesion_id)
                 ->orderBy('ronda', 'desc')
@@ -43,8 +43,27 @@ class CuentaController extends Controller
 
         } catch (\Exception $e) {
             Log::error('Error al cargar la cuenta del cliente: ' . $e->getMessage());
-            // Si algo falla, lo devolvemos a la carta en lugar de romperle la pantalla
+            
             return redirect()->route('cliente.carta')->with('error', 'Hubo un problema al cargar tu cuenta. Por favor, avisa a un camarero.');
         }
+    }
+
+    public function indexSobreNosotros(){
+        //verifico otra vez si la sesion está activa
+        $sesion_id = session('sesion_id');
+
+        $sesion = Sesion::with('mesa')->find($sesion_id);
+
+        if (!$sesion || $sesion->estado === 'cerrada') {
+            session()->forget(['sesion_id', 'cliente_id', 'carrito', 'carrito_count']);
+            return redirect()->route('cliente.inicio')->with('error', 'Tu mesa ha sido cerrada.');
+        }
+
+       if (!$sesion_id) {
+            return redirect()->route('cliente.inicio')->with('error', 'Tu sesión ha caducado.');
+        }
+
+        return view('cliente.SobreNosotros');
+
     }
 }

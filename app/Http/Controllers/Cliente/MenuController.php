@@ -50,9 +50,10 @@ class MenuController extends Controller
 
             // 4. Calculamos en qué ronda estamos de forma dinámica basada en la BD
             $rondaActual = $sesion->pedidos()->count() + 1;
-
+            
+           $nombreRestaurante = configuracion('nombre_restaurante');
             // 5. Le mandamos todos estos datos a tu vista Blade
-            return view('cliente.carta', compact('categorias', 'platos', 'sesion', 'rondaActual'));
+            return view('cliente.carta', compact('categorias', 'platos', 'sesion', 'rondaActual', 'nombreRestaurante'));
 
         } catch (\Exception $e) {
             Log::error('Error al cargar la carta del cliente: ' . $e->getMessage());

@@ -591,29 +591,7 @@
 
 <body>
 
-    <aside class="sidebar shadow-sm">
-        <div class="d-flex align-items-center gap-3 mb-5 px-2">
-            <div class="d-inline-flex align-items-center justify-content-center"
-                style="width: 40px; height: 40px; border-radius: 12px; background: rgba(255,122,0,0.1); border: 1px solid var(--primary-orange);">
-                <span style="color: var(--primary-orange); font-weight: 700; font-size: 1.2rem;">B</span>
-            </div>
-            <h2 class="h5 mb-0 fw-bold">Admin TPV</h2>
-        </div>
 
-        <nav class="d-flex flex-column flex-grow-1">
-            <a href="{{ route('admin.mesas') }}" class="nav-link-admin active">
-                <i class="bi bi-grid-fill"></i> Gestión de Mesas
-            </a>
-            <a href="{{ route('admin.platos.index') }}" class="nav-link-admin">
-                <i class="bi bi-journal-richtext"></i> Menú de Platos
-            </a>
-            <a href="#" class="nav-link-admin">
-                <i class="bi bi-graph-up-arrow"></i> Historial / Ventas
-            </a>
-            <a href="{{ route('admin.configuracion.index') }}" class="nav-link-admin">
-                <i class="bi bi-gear-fill"></i> Configuración
-            </a>
-        </nav>
 
         <div class="mt-auto border-top pt-4">
             <div class="d-flex align-items-center gap-3 mb-3 px-2">
