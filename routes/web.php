@@ -50,94 +50,86 @@ Route::get('/nosotros', [CuentaController::class, 'indexSobreNosotros'])->name('
 |--------------------------------------------------------------------------
 */
 
-// Sin loguear
+// ==========================================
+// 🚪 SIN LOGUEAR (Público para el Staff)
+// ==========================================
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 });
 
-// Protegidas (Solo personal logueado)
+
+// ==========================================
+// 🔒 PROTEGIDAS (Solo personal logueado)
+// ==========================================
 Route::middleware('auth')->group(function () {
 
-    // Cerrar Sesión del Staff
+    // Cerrar Sesión del Staff (Cualquiera logueado puede salir)
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // ----------------------------------------
-    // Rutas del Administrador (Mesas)
-    // ----------------------------------------
-    Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.mesas');
-    Route::post('/admin/mesa/store', [AdminController::class, 'store'])->name('admin.mesa.store');
-    Route::post('/admin/mesa/eliminar/{mesa}', [AdminController::class, 'destroy'])->name('admin.mesa.eliminar');
-    Route::post('/mesa/{mesa}/activar', [AdminController::class, 'activar'])->name('admin.mesa.activar');
 
-    // ----------------------------------------
-    // Módulo: TPV Y SESIONES
-    // ----------------------------------------
-    Route::get('/admin/mesa/lista-mesas-libres', [ClienteAdminController::class, 'listaMesasLibres'])->name('admin.mesa.lista-mesas-libres');
-    Route::get('/admin/mesa/{mesa}/tpv', [ClienteAdminController::class, 'show'])->name('admin.mesa.show');
-    Route::post('/admin/mesa/{mesa}/desocupar', [ClienteAdminController::class, 'desocupar'])->name('admin.mesa.desocupar');
+    // --------------------------------------------------------
+    // 🛡️ ZONA VIP: SOLO ADMINISTRADORES
+    // --------------------------------------------------------
+    Route::middleware(['can:es-admin'])->group(function () {
 
-    // ----------------------------------------
-    // Módulo: CATEGORÍAS Y PLATOS (Restauradas sin Resource)
-    // ----------------------------------------
-    Route::get('/admin/platos', [PlatoAdminController::class, 'index'])->name('admin.platos.index');
-    Route::post('/admin/plato/{plato}/toggle', [PlatoAdminController::class, 'toggleActivo'])->name('admin.plato.toggle');
-    Route::post('/admin/categoria/store', [CategoriaAdminController::class, 'store'])->name('admin.categoria.store');
-    Route::post('/admin/categoria/{categoria}/eliminar', [CategoriaAdminController::class, 'destroy'])->name('admin.categoria.eliminar');
-    Route::post('/admin/carta/plato/store', [PlatoAdminController::class, 'store'])->name('admin.plato.store');
-    Route::delete('/admin/carta/plato/{plato}/eliminar', [PlatoAdminController::class, 'destroy']);
-    Route::patch('/admin/carta/plato/{plato}/reactivar', [PlatoAdminController::class, 'reactivar'])->name('admin.plato.reactivar');
+        // --- Rutas del Administrador (Mesas) ---
+        Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.mesas');
+        Route::post('/admin/mesa/store', [AdminController::class, 'store'])->name('admin.mesa.store');
+        Route::post('/admin/mesa/eliminar/{mesa}', [AdminController::class, 'destroy'])->name('admin.mesa.eliminar');
+        Route::post('/mesa/{mesa}/activar', [AdminController::class, 'activar'])->name('admin.mesa.activar');
 
+        // --- Módulo: TPV Y SESIONES ---
+        Route::get('/admin/mesa/lista-mesas-libres', [ClienteAdminController::class, 'listaMesasLibres'])->name('admin.mesa.lista-mesas-libres');
+        Route::get('/admin/mesa/{mesa}/tpv', [ClienteAdminController::class, 'show'])->name('admin.mesa.show');
+        Route::post('/admin/mesa/{mesa}/desocupar', [ClienteAdminController::class, 'desocupar'])->name('admin.mesa.desocupar');
 
-    // ----------------------------------------
-    // Rutas de Cocina
-    // ----------------------------------------
-    Route::get('/cocina', [CocinaController::class, 'index'])->name('cocina.index');
-    Route::patch('/cocina/pedido/{pedido}/estado', [CocinaController::class, 'cambiarEstado'])->name('cocina.pedido.estado');
-
-    // ----------------------------------------
-    // Rutas de Historial de Ventas
-    // ----------------------------------------
-    Route::get('/historial', [historialVentasController::class, 'index'])->name('admin.historial');
-    Route::post('/admin/mesa/{mesa}/cobrar', [historialVentasController::class, 'cobrar'])->name('admin.mesa.cobrar');
-
-    // 2. Pega esto dentro de tu grupo de rutas del Panel de Admin (Route::middleware(['auth'])...)
-    Route::prefix('admin')->group(function () {
-
-        // El Panel Principal del Historial (También maneja la exportación a CSV)
+        // --- Módulo: CATEGORÍAS Y PLATOS ---
+        Route::get('/admin/platos', [PlatoAdminController::class, 'index'])->name('admin.platos.index');
+        Route::post('/admin/plato/{plato}/toggle', [PlatoAdminController::class, 'toggleActivo'])->name('admin.plato.toggle');
+        Route::post('/admin/categoria/store', [CategoriaAdminController::class, 'store'])->name('admin.categoria.store');
+        Route::post('/admin/categoria/{categoria}/eliminar', [CategoriaAdminController::class, 'destroy'])->name('admin.categoria.eliminar');
+        Route::post('/admin/carta/plato/store', [PlatoAdminController::class, 'store'])->name('admin.plato.store');
+        Route::delete('/admin/carta/plato/{plato}/eliminar', [PlatoAdminController::class, 'destroy']);
+        Route::patch('/admin/carta/plato/{plato}/reactivar', [PlatoAdminController::class, 'reactivar'])->name('admin.plato.reactivar');
+        
+        // --- Rutas de Historial de Ventas ---
         Route::get('/historial', [HistorialVentasController::class, 'index'])->name('admin.historial');
+        Route::post('/admin/mesa/{mesa}/cobrar', [HistorialVentasController::class, 'cobrar'])->name('admin.mesa.cobrar');
 
-        // La ruta mágica para que el Modal cargue el ticket sin recargar la página (AJAX)
-        Route::get('/ventas/{venta}', [HistorialVentasController::class, 'show'])->name('admin.ventas.show');
+        // (El prefijo que tenías para ventas y anulación de tickets)
+        Route::prefix('admin')->group(function () {
+            Route::get('/ventas/{venta}', [HistorialVentasController::class, 'show'])->name('admin.ventas.show');
+            Route::patch('/ventas/{venta}/anular', [HistorialVentasController::class, 'anular'])->name('admin.ventas.anular');
+        });
 
-        // La ruta para cuando el cajero la lía y tiene que anular un ticket
-        Route::patch('/ventas/{venta}/anular', [HistorialVentasController::class, 'anular'])->name('admin.ventas.anular');
+        // --- MÓDULO DE CONFIGURACIÓN Y PERSONAL ---
+        Route::get('/admin/configuracion', [ConfiguracionAdminController::class, 'index'])->name('admin.configuracion.index');
+        Route::post('/admin/configuracion/ajustes', [ConfiguracionAdminController::class, 'updateAjustes'])->name('admin.configuracion.ajustes');
+        Route::post('/admin/configuracion/resetear', [ConfiguracionAdminController::class, 'resetearDefecto'])->name('admin.configuracion.resetear');
 
     });
 
-    // ==========================================
-    // MÓDULO DE CONFIGURACIÓN Y PERSONAL
-    // ==========================================
-Route::middleware(['auth'])->group(function () {
-    // Panel de configuración (GET)
-    Route::get('/admin/configuracion', [ConfiguracionAdminController::class, 'index'])
-        ->name('admin.configuracion.index');
 
-    // Guardar ajustes del form global (POST)
-    Route::post('/admin/configuracion/ajustes', [ConfiguracionAdminController::class, 'updateAjustes'])
-        ->name('admin.configuracion.ajustes');
+    // --------------------------------------------------------
+    // 🍳 ZONA DE COCINA: SOLO CHEFS
+    // --------------------------------------------------------
+    Route::middleware(['can:es-cocina'])->group(function () {
+        
+        // --- Rutas de Cocina ---
+        Route::get('/cocina', [CocinaController::class, 'index'])->name('cocina.index');
+        Route::patch('/cocina/pedido/{pedido}/estado', [CocinaController::class, 'cambiarEstado'])->name('cocina.pedido.estado');
 
-    // Restaurar valores de fábrica (POST)
-    Route::post('/admin/configuracion/resetear', [ConfiguracionAdminController::class, 'resetearDefecto'])
-        ->name('admin.configuracion.resetear');
+    });
 
-    // Crear empleado (POST)
-    Route::post('/admin/configuracion/empleado', [ConfiguracionAdminController::class, 'storeEmpleado'])
-        ->name('admin.configuracion.empleado.store');
+});
 
-    // Eliminar empleado (DELETE, usa Route Model Binding)
-    Route::delete('/admin/configuracion/empleado/{empleado}', [ConfiguracionAdminController::class, 'destroyEmpleado'])
-        ->name('admin.configuracion.empleado.destroy');
+//lo tengo que borrar cuando cree el cerrar sesion de cocina
+Route::get('/salida-de-emergencia', function () {
+    auth()->logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect('/login');
 });
 
 
@@ -182,4 +174,3 @@ Route::middleware(['auth'])->group(function () {
 //   modo_panico
 
 
-});

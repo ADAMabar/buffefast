@@ -37,7 +37,18 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="badge bg-success rounded-pill">{{ $plato->precio }} €</span>
                             </div>
+                        
+                            @php
+                                $cantidadEnCarrito = $carritoActual[$plato->id]['cantidad'] ?? 0;
+                            @endphp
 
+                           
+                            @if($cantidadEnCarrito > 0)
+                                <span class="badge bg-success">
+                                    En el carrito: {{ $cantidadEnCarrito }}
+                                </span>
+                            @endif
+                            
                             <form action="{{ route('cliente.carrito.add', $plato->id) }}" method="POST">
                                 @csrf
                                 <button

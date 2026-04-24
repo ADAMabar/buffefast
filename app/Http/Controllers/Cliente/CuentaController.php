@@ -40,6 +40,7 @@ class CuentaController extends Controller
             $rondaActual = $pedidos->count() + 1;
 
             return view('cliente.cuenta', compact('sesion', 'pedidos', 'rondaActual'));
+            
 
         } catch (\Exception $e) {
             Log::error('Error al cargar la cuenta del cliente: ' . $e->getMessage());
@@ -51,6 +52,13 @@ class CuentaController extends Controller
     public function indexSobreNosotros(){
         //verifico otra vez si la sesion está activa
         $sesion_id = session('sesion_id');
+        
+         $pedidos = Pedido::with('platos')
+                ->where('sesion_id', $sesion_id)
+                ->orderBy('ronda', 'desc')
+                ->get();
+                
+        $rondaActual = $pedidos->count() + 1;
 
         $sesion = Sesion::with('mesa')->find($sesion_id);
 
@@ -63,7 +71,7 @@ class CuentaController extends Controller
             return redirect()->route('cliente.inicio')->with('error', 'Tu sesión ha caducado.');
         }
 
-        return view('cliente.SobreNosotros');
+        return view('cliente.sobreNosotros', compact('sesion', 'rondaActual'));
 
     }
 }

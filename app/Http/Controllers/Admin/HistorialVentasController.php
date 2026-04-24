@@ -349,7 +349,7 @@ class HistorialVentasController extends Controller
             
             // 6. Contar los comensales (con el truco Senior)
             $comensales = $sesionActiva->clientes()->count() ?: 1;
-
+            $ivaAplicada = Configuracion::get();
             // 7. Crear el ticket en la tabla Ventas
             Venta::create([
                 'sesion_id'      => $sesionActiva->id,
@@ -370,6 +370,9 @@ class HistorialVentasController extends Controller
 
             // 9. Confirmar todo y guardar en base de datos
             DB::commit();
+
+
+            
 
             // 10. Redirigir al usuario con el mensaje verde
             return redirect()->route('admin.mesas')

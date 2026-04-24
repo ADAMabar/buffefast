@@ -16,3 +16,5 @@ if (!function_exists('configuracion')) {
         return $ajustes[$clave] ?? $default;
     }
 }
+
+

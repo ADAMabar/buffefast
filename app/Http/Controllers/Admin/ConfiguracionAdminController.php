@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Configuracion;
 use Illuminate\Http\Request;
 use App\Models\Usuario;
+use App\Requests\Admin\StoreEmpleadoRequest;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ConfiguracionAdminController extends Controller
 {
@@ -24,24 +27,8 @@ class ConfiguracionAdminController extends Controller
 
         return view('admin.configuracion', compact('ajustes', 'empleados'));
     }
-    public function storeEmpleado(Request $request)
-    {
-    $request->validate([
-            'nombre' => 'required|string|max:255',
-            // OJO AQUÍ: cambiamos unique:users por unique:usuarios
-            'email' => 'required|email|unique:usuarios,email', 
-            'password' => 'required|string|min:6|confirmed',
-            'rol' => 'required|in:admin,cocina',
-        ]);
 
-        Usuario::create([
-            'nombre' => $request->nombre,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'rol' => $request->rol,
-        ]);
-        return redirect()->back()->with('success', 'Empleado creado correctamente.');
-    }
+    
     public function resetearDefecto()
     {
         // Borramos toda la tabla de configuración
@@ -88,17 +75,6 @@ class ConfiguracionAdminController extends Controller
         cache()->forget('ajustes_globales');
 
         return redirect()->back()->with('success', 'Configuración guardada correctamente.');
-    }
-
-    public function destroyEmpleado(Usuario $empleado)
-    {
-        if (auth()->id() === $empleado->id) {
-            return redirect()->back()->with('error', 'No puedes eliminar tu propio usuario.');
-        }
-
-        $empleado->delete();
-
-        return redirect()->back()->with('success', 'Empleado eliminado.');
     }
 
 

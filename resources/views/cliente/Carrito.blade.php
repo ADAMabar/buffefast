@@ -17,6 +17,16 @@
                 </a>
             </div>
         @else
+         
+            @php
+                $maxPlatosRonda = (int) configuracion('limite_platos_ronda', 4);
+                $platosEnCarrito = 0;
+                foreach($carrito as $id => $item) {
+                    if(empty($id)) continue;
+                    $platosEnCarrito += $item['cantidad'] ?? 1;
+                }
+            @endphp
+
             <div class="d-flex flex-column gap-3">
                 @foreach($carrito as $id => $item)
                     @if(empty($id))
@@ -37,7 +47,8 @@
 
                             <div class="pe-2">
                                 <form action="{{ route('cliente.carrito.destroy', ['id' => $id]) }}" method="POST">
-                                    @csrf <button type="submit" class="btn btn-sm text-danger border-0">
+                                    @csrf 
+                                    <button type="submit" class="btn btn-sm text-danger border-0">
                                         <i class="bi bi-trash fs-5"></i>
                                     </button>
                                 </form>
@@ -47,45 +58,65 @@
                 @endforeach
             </div>
 
+            {{-- 2. BARRA INFERIOR INTELIGENTE --}}
             <div id="contenedor-confirmar" class="position-fixed w-100 p-3" style="bottom: 70px; left: 0; z-index: 1020;">
-                @if($segundosRestantes > 0)
+                
+                {{-- ESTADO A: Se pasó del límite de platos --}}
+                @if($maxPlatosRonda > 0 && $platosEnCarrito > $maxPlatosRonda)
+                    <div class="alert alert-danger mb-2 shadow-sm rounded-4 py-2 text-center border-danger-subtle" style="font-size: 0.85rem;">
+                        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                        Límite excedido. Quita <b>{{ $platosEnCarrito - $maxPlatosRonda }}</b> plato(s).
+                    </div>
+                    <button disabled class="btn btn-secondary w-100 rounded-pill py-3 fw-bold shadow-lg d-flex justify-content-between align-items-center px-4">
+                        <span>Demasiados platos</span>
+                        <i class="bi bi-x-circle fs-5"></i>
+                    </button>
+
+                {{-- ESTADO B: Platos Ok, pero tiene que esperar el temporizador --}}
+                @elseif($segundosRestantes > 0)
                     <button id="btn-espera" disabled
                         class="btn btn-secondary w-100 rounded-pill py-3 fw-bold shadow-lg d-flex justify-content-between align-items-center px-4">
                         <span>Espera para pedir: <span id="contador-reloj">--:--</span></span>
                         <i class="bi bi-clock-history fs-5"></i>
                     </button>
+
+                {{-- ESTADO C: Todo correcto, listo para pedir --}}
                 @else
                     <form action="{{ route('cliente.carrito.confirmar') }}" method="POST">
                         @csrf
                         <button type="submit"
                             class="btn bg-orange text-white w-100 rounded-pill py-3 fw-bold shadow-lg d-flex justify-content-between align-items-center px-4">
-                            <span>Confirmar a Cocina</span>
+                            <span>Confirmar ({{ $platosEnCarrito }} platos)</span>
                             <i class="bi bi-check-circle-fill fs-5"></i>
                         </button>
                     </form>
                 @endif
             </div>
 
+            
             <script>
                 let segundos = Math.round({{ $segundosRestantes }});
 
                 if (segundos > 0) {
                     const display = document.querySelector('#contador-reloj');
 
-                    const actualizarReloj = () => {
-                        let minutos = Math.floor(segundos / 60);
-                        let segs = Math.floor(segundos % 60);
+                    // Solo iniciamos el reloj si el elemento existe (para evitar errores de JS cuando está el mensaje de límite)
+                    if(display) {
+                        const actualizarReloj = () => {
+                            let minutos = Math.floor(segundos / 60);
+                            let segs = Math.floor(segundos % 60);
 
-                        display.textContent = `${minutos.toString().padStart(2, '0')}:${segs.toString().padStart(2, '0')}`;
+                            display.textContent = `${minutos.toString().padStart(2, '0')}:${segs.toString().padStart(2, '0')}`;
 
-                        if (segundos <= 0) {
-                            clearInterval(intervalo);
-                            location.reload();
-                        }
-                        segundos--;
-                    };
-                    actualizarReloj();
-                    const intervalo = setInterval(actualizarReloj, 1000);
+                            if (segundos <= 0) {
+                                clearInterval(intervalo);
+                                location.reload();
+                            }
+                            segundos--;
+                        };
+                        actualizarReloj();
+                        const intervalo = setInterval(actualizarReloj, 1000);
+                    }
                 }
             </script>
         @endif

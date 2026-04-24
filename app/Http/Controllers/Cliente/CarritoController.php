@@ -10,6 +10,7 @@ use App\Models\Pedido;
 use App\Models\Configuracion;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\PedidoPlato;
 
 class CarritoController extends Controller
 {
@@ -18,7 +19,7 @@ class CarritoController extends Controller
      */
     public function index()
     {
-        try {
+        try{
             // 1. EL GUARDIA DE SEGURIDAD
             $sesion_id = session('sesion_id');
             $sesionDB = Sesion::find($sesion_id);
@@ -36,12 +37,12 @@ class CarritoController extends Controller
             $carrito = session('carrito', []);
             $cliente_id = session('cliente_id');
             $sesion = Sesion::with('mesa')->find($sesion_id);
-
+            
             // 3. Lógica del temporizador (Anti-spam de comandas)
-            $minutosEspera = (int) (Configuracion::where('clave', 'minutos_entre_rondas')->value('valor') ?? 0);
+            $minutosEspera = (int) Configuracion('tiempo_ronda_minutos',10);
             $ultimoPedido = Pedido::where('sesion_id', $sesion_id)->where('cliente_id', $cliente_id)->latest()->first();
             $segundosRestantes = 0;
-
+            
             if ($ultimoPedido) {
                 $tiempoPermitido = $ultimoPedido->created_at->addMinutes($minutosEspera);
                 $ahora = now();
@@ -50,13 +51,21 @@ class CarritoController extends Controller
                     $segundosRestantes = $ahora->diffInSeconds($tiempoPermitido);
                 }
             }
+            
 
             $rondaActual = Pedido::where('sesion_id', $sesion_id)->count() + 1;
+            $max_rondas_por_persona = Configuracion('rondas_maximas_sesion');
+            if($rondaActual >= $max_rondas_por_persona){
+            return back()->with('error', 'Ya has pasado el limite de de rodas por persona, porfavor habla con el camarero');
+           
+            }
 
-            return view('cliente.carrito', compact('carrito', 'sesion', 'segundosRestantes', 'rondaActual'));
+            
+            
+            return view('cliente.carrito', compact('carrito', 'sesion', 'segundosRestantes', 'rondaActual','max_rondas_por_persona'));
 
         } catch (\Exception $e) {
-            Log::error('Error al cargar el carrito del cliente: ' . $e->getMessage());
+          Log::error('Error al cargar el carrito del cliente: ' . $e->getMessage());
             return back()->with('error', 'Ocurrió un error al cargar tu pedido.');
         }
     }
@@ -146,16 +155,27 @@ class CarritoController extends Controller
             if (empty($carrito)) {
                 return back()->with('error', 'No puedes enviar un pedido vacío.');
             }
+            
+            $max_platos_ronda = (int) configuracion('limite_platos_ronda', 4);
+            $total_platos_carrito = 0;
 
-            // 2. Anti-cheat de tiempo (Si tocan el frontend con inspeccionar elemento)
-            $minutosEspera = (int) (Configuracion::where('clave', 'minutos_entre_rondas')->value('valor') ?? 10);
+            foreach ($carrito as $idPlato => $item) {
+                if (empty($idPlato)) continue; 
+                $total_platos_carrito += $item['cantidad'] ?? 1;
+            }
+
+            if ($max_platos_ronda > 0 && $total_platos_carrito > $max_platos_ronda) {
+                return back()->with('error', "El límite por ronda es de {$max_platos_ronda} platos. Tienes {$total_platos_carrito} en tu carrito. Quita algunos para continuar.");
+            }
+            // aqui lo que hago es que basicamente si tocan los mins en el fornted pues no lo haga
+            $minutosEspera = (int) Configuracion('tiempo_ronda_minutos',10);
             $ultimoPedido = Pedido::where('sesion_id', $sesion_id)->where('cliente_id', $cliente_id)->latest()->first();
 
             if ($ultimoPedido && now()->lt($ultimoPedido->created_at->addMinutes($minutosEspera))) {
                 return back()->with('error', 'Aún debes esperar un poco para la siguiente ronda.');
             }
 
-            // 3. LA MAGIA: Transacción para asegurar el guardado perfecto
+            //  Transacción para asegurar el guardado perfecto
             DB::transaction(function () use ($sesion_id, $cliente_id, $carrito) {
 
                 // Contamos la ronda bloqueando la tabla temporalmente para evitar peticiones duplicadas simultáneas
@@ -164,7 +184,7 @@ class CarritoController extends Controller
                     ->lockForUpdate()
                     ->count() + 1;
 
-                // Creamos el registro "Padre"
+                
                 $pedido = Pedido::create([
                     'cliente_id' => $cliente_id,
                     'sesion_id' => $sesion_id,

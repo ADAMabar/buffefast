@@ -1,10 +1,4 @@
-    <form action="{{ route('admin.configuracion.ajustes') }}" method="POST" id="cfgForm">
-        @csrf
-
-        <div class="tab-content" id="configTabsContent">
-            
-         
-            <div class="tab-pane fade show active" id="tab-identidad" role="tabpanel" aria-labelledby="tab-identidad-btn">
+<div class="tab-pane fade show active" id="tab-identidad" role="tabpanel" aria-labelledby="tab-identidad-btn">
                 <div class="row g-3">
                     
                     {{-- Tarjeta: Datos del restaurante (Más ancha en pantallas grandes) --}}
@@ -147,4 +141,4 @@
                 </div>
             </div> 
 
-            </div> 
+            

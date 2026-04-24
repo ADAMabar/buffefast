@@ -114,6 +114,8 @@
             transform: translateY(-2px);
             box-shadow: 0 12px 25px rgba(17,24,39,.3);
         }
+
+        
     </style>
 
         <ul class="nav nav-pills mb-4 gap-2 pb-2" id="configTabs" role="tablist">
@@ -132,35 +134,38 @@
                 <i class="bi bi-receipt me-1"></i> Precios
             </button>
         </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-personal-btn" data-bs-toggle="pill" data-bs-target="#tab-personal" type="button" role="tab">
+                <i class="bi bi-people-fill me-1"></i> Personal
+            </button>
+        </li>
+        
     </ul>
 
-<ul class="nav nav-pills mb-4 gap-2 pb-2" id="configTabs" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="tab-identidad-btn" data-bs-toggle="pill" data-bs-target="#tab-identidad" type="button" role="tab"><i class="bi bi-building me-1"></i> Identidad</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="tab-operativa-btn" data-bs-toggle="pill" data-bs-target="#tab-operativa" type="button" role="tab"><i class="bi bi-stopwatch-fill me-1"></i> Operativa</button>
-        </li>
-        </ul>
 
-    
-    <form action="{{ route('admin.configuracion.ajustes') }}" method="POST" id="cfgForm">
+   
+    <form action="{{ route('admin.configuracion.ajustes') }}" method="POST" id="cfgForm" novalidate>
         @csrf
+
 
         <div class="tab-content" id="configTabsContent">
             
-          
-             @include('components.componentsConfiguracion.identidad')
-             @include('components.componentsConfiguracion.precio')
+            @include('components.componentsConfiguracion.identidad')
+            @include('components.componentsConfiguracion.precios')
+            @include('components.componentsConfiguracion.operativas')
 
-            
+            <div class="tab-pane fade" id="tab-personal" role="tabpanel" aria-labelledby="tab-personal-btn">
+                <livewire:admin.personal-manager />
+            </div>
+
         </div>
 
+     
         <div class="cfg-save-bar">
             <button type="submit" class="btn-save"><i class="bi bi-floppy-fill"></i> Guardar configuración</button>
         </div>
+        
     </form>
-
     <script>
         // Preview del Logo
         const logoInput = document.getElementById('logoUrlInput');
@@ -199,5 +204,26 @@
             chkPen.addEventListener('change', togglePenalizacion);
             togglePenalizacion();
         }
+
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const pestañaGuardada = localStorage.getItem('pestañaConfiguracion');
+            
+            if (pestañaGuardada) {
+                const botonTab = document.getElementById(pestañaGuardada);
+                if (botonTab) {
+                    const tab = new bootstrap.Tab(botonTab);
+                    tab.show();
+                }
+            }
+
+            const botonesTabs = document.querySelectorAll('#configTabs button[data-bs-toggle="pill"]');
+            botonesTabs.forEach(boton => {
+                boton.addEventListener('shown.bs.tab', function (event) {
+                    localStorage.setItem('pestañaConfiguracion', event.target.id);
+                });
+            });
+        });
+      
     </script>
 </x-layouts.admin>

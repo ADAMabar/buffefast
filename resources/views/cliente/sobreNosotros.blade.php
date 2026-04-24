@@ -1,8 +1,5 @@
 <x-layouts.cliente-app>
-    
-    <header class="top-nav d-flex align-items-center justify-content-center shadow-sm" style="height: 70px;">
-        <h1 class="h5 mb-0 fw-bold text-dark">Sobre Nosotros</h1>
-    </header>
+    <x-header-carta :sesion="$sesion" :rondaActual="$rondaActual" />
 
     <main class="px-3 pt-4 pb-5">
         
