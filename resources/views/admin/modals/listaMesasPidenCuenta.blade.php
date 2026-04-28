@@ -35,15 +35,6 @@
                                             class="btn btn-outline-info fw-bold rounded-pill px-4">
                                             <i class="bi bi-eye me-1"></i>Ver TPV
                                         </a>
-
-                                        <form action="{{ route('admin.mesa.desocupar', $mesa->id) }}" method="POST"
-                                            onsubmit="return confirm('¿Confirmas el cobro y liberación de la Mesa {{ $mesa->numero }}?');">
-                                            @csrf
-                                            <button type="submit"
-                                                class="btn btn-warning fw-bold rounded-pill px-4 shadow-sm text-dark">
-                                                <i class="bi bi-cash-coin me-1"></i>Cobrar
-                                            </button>
-                                        </form>
                                     </div>
 
                                 </div>

@@ -44,7 +44,7 @@ class ClienteAdminController extends Controller
 
                 $totalPersona = $pedidosDelCliente->sum(function ($pedido) {
                     return $pedido->platos->sum(function ($plato) {
-                        // EXORCISMO 2: Validamos que exista el pivot y la cantidad por seguridad
+                        // Validamos que exista el pivot y la cantidad por seguridad
                         $cantidad = $plato->pivot->cantidad ?? 1;
                         return $plato->precio * $cantidad;
                     });
@@ -56,14 +56,21 @@ class ClienteAdminController extends Controller
                     'cantidad_rondas' => $pedidosDelCliente->count()
                 ];
             });
+           
+          $porcentajeIva = configuracion('porcentaje_impuestos', 10);
+            $multiplicadorIva = 1 + ($porcentajeIva / 100);
 
-            // 4. Calculamos total mesa global
-            $totalMesa = $pedidos->sum(function ($pedido) {
-                return $pedido->platos->sum(function ($plato) {
-                    $cantidad = $plato->pivot->cantidad ?? 1;
-                    return $plato->precio * $cantidad;
+            $precioBase = Configuracion('precio_buffet_adulto',10);
+            $totalMenu = $pedidos->sum(function($pedido) use ($multiplicadorIva) {
+                return $pedido->platos->sum(function($plato) use ($multiplicadorIva) {
+                    
+                    $subtotal = $plato->precio * $plato->pivot->cantidad;
+                    return $subtotal * $multiplicadorIva; 
+                    
                 });
             });
+
+            $totalMesa = $totalMenu + $precioBase;  
 
             $cajas = Caja::where('activa', true)->get();
 
@@ -76,7 +83,7 @@ class ClienteAdminController extends Controller
                 'cajas' => $cajas,
             ]);
 
-            // Cambié \Exception por \Throwable para atrapar errores fatales de PHP 8 (como los null pointer)
+            // Cambié \Exception por \Throwable para atrapar errores fatales de PHP 
         } catch (\Throwable $e) {
             Log::error("Error al cargar TPV de la mesa {$mesa->id}: " . $e->getMessage());
             return redirect()->route('admin.mesas')->with('error', 'Ocurrió un error al cargar los detalles de la mesa.');
@@ -134,8 +141,16 @@ class ClienteAdminController extends Controller
     }
 
 
-    public function notificaciondecuenta()
+    public function notificaciondecuenta(Mesa $mesa)
     {
+     $sesionActiva = $mesa->sesiones()      
+    ->whereIn('estado', ['activa', 'solicitando_cuenta'])
+    ->first();
+
+    $mesa = $sesionActiva->$mesa->pluck('numero');
+    $nombresPidiendoCuenta = $sesionActiva->clientes->pluck('nombre')->implode(',');
+    
+    return view('admin.listaPlatosOcultos', compact('sesionActiva', 'nombresPidiendoCuenta', '$mesa'));
 
     }
 }

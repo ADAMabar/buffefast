@@ -93,7 +93,7 @@
                     @if($categoria->platos->isEmpty())
                         <p class="text-muted fst-italic text-center mb-0 pt-4">No hay platos en esta categoría.</p>
                     @else
-                   
+                    
                         <div class="pt-4" style="
                             display: grid;
                             grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
@@ -137,8 +137,7 @@
                                                     alt="{{ $plato->nombre }}"
                                                     loading="lazy">
                                             @else
-                                                <div class="rounded-3 mb-2 bg-light d-flex justify-content-center
-                                                            align-items-center border w-100"
+                                                <div class="rounded-3 mb-2 bg-light d-flex justify-content-center align-items-center border w-100"
                                                     style="height: 140px;" aria-hidden="true">
                                                     <i class="bi bi-image fs-1 text-muted opacity-50"></i>
                                                 </div>
@@ -153,7 +152,7 @@
                                                        line-height: 1.5;">
                                                 {{ $plato->descripcion ?? 'Sin descripción.' }}
                                             </p>
-                                            <div class="d-flex justify-content-between align-items-center">
+                                            <div class="d-flex justify-content-between align-items-center mt-2">
                                                 <span class="badge bg-success rounded-pill">{{ $plato->precio }} €</span>
                                             </div>
                                         </div>
@@ -161,11 +160,9 @@
                                         {{-- Card footer: toggle + actions --}}
                                         <div class="card-body pt-3">
 
-                                            {{-- Visibility toggle --}}
+                                            {{-- Visibility toggle (AJAX) --}}
                                             <div class="mb-3 p-2 rounded-3 bg-light border text-center">
-                                                <form action="{{ route('admin.plato.toggle', $plato->id) }}"
-                                                    method="POST"
-                                                    class="m-0">
+                                                <form action="{{ route('admin.plato.toggle', $plato->id) }}" method="POST" class="m-0">
                                                     @csrf
                                                     <div class="form-check form-switch d-inline-block m-0">
                                                         <input class="form-check-input"
@@ -173,11 +170,10 @@
                                                             type="checkbox"
                                                             role="switch"
                                                             id="switch-{{ $plato->id }}"
-                                                            onchange="this.form.submit()"
+                                                            onchange="toggleSilencioso(this, {{ $plato->id }})"
                                                             aria-label="Visibilidad de {{ $plato->nombre }}"
                                                             {{ $plato->activo ? 'checked' : '' }}>
-                                                        <label class="form-check-label small fw-bold
-                                                                       {{ $plato->activo ? 'text-success' : 'text-danger' }}"
+                                                        <label class="form-check-label small fw-bold {{ $plato->activo ? 'text-success' : 'text-danger' }}"
                                                             for="switch-{{ $plato->id }}">
                                                             {{ $plato->activo ? 'Visible' : 'Oculto' }}
                                                         </label>
@@ -191,9 +187,7 @@
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#modalEditarPlato{{ $plato->id }}"
                                                     aria-label="Editar {{ $plato->nombre }}"
-                                                    style="background-color: rgba(13,110,253,0.1);
-                                                           color: #0d6efd;
-                                                           border: 1px solid rgba(13,110,253,0.2);">
+                                                    style="background-color: rgba(13,110,253,0.1); color: #0d6efd; border: 1px solid rgba(13,110,253,0.2);">
                                                     <i class="bi bi-pencil"></i>
                                                     <span class="d-none d-sm-inline ms-1">Editar</span>
                                                 </button>
@@ -202,9 +196,7 @@
                                                     class="btn flex-fill fw-bold rounded-3 py-2"
                                                     onclick="borrarPlato({{ $plato->id }})"
                                                     aria-label="Borrar {{ $plato->nombre }}"
-                                                    style="background-color: rgba(239,68,68,0.1);
-                                                           color: #EF4444;
-                                                           border: 1px solid rgba(239,68,68,0.2);">
+                                                    style="background-color: rgba(239,68,68,0.1); color: #EF4444; border: 1px solid rgba(239,68,68,0.2);">
                                                     <i class="bi bi-trash"></i>
                                                     <span class="d-none d-sm-inline ms-1">Borrar</span>
                                                 </button>
@@ -219,13 +211,10 @@
                                         aria-labelledby="offcanvasPlatoLabel{{ $plato->id }}">
 
                                         <div class="offcanvas-header border-bottom bg-light">
-                                            <h5 class="offcanvas-title fw-bold"
-                                                id="offcanvasPlatoLabel{{ $plato->id }}">
+                                            <h5 class="offcanvas-title fw-bold" id="offcanvasPlatoLabel{{ $plato->id }}">
                                                 <i class="bi bi-info-circle me-2"></i>Detalles del Plato
                                             </h5>
-                                            <button type="button" class="btn-close"
-                                                data-bs-dismiss="offcanvas"
-                                                aria-label="Cerrar"></button>
+                                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
                                         </div>
 
                                         <div class="offcanvas-body p-4">
@@ -236,8 +225,7 @@
                                                     alt="{{ $plato->nombre }}"
                                                     loading="lazy">
                                             @else
-                                                <div class="w-100 rounded-4 mb-4 bg-light border
-                                                            d-flex justify-content-center align-items-center"
+                                                <div class="w-100 rounded-4 mb-4 bg-light border d-flex justify-content-center align-items-center"
                                                     style="height: 200px;" aria-hidden="true">
                                                     <i class="bi bi-image fs-1 text-muted opacity-50"></i>
                                                 </div>
@@ -249,8 +237,7 @@
                                                 {{ $plato->activo ? 'Disponible en la carta' : 'Oculto / Agotado' }}
                                             </span>
 
-                                            <h6 class="fw-bold text-muted mb-2 text-uppercase small"
-                                                style="letter-spacing: 1px;">
+                                            <h6 class="fw-bold text-muted mb-2 text-uppercase small" style="letter-spacing: 1px;">
                                                 Descripción e Ingredientes
                                             </h6>
                                             <p class="text-dark" style="line-height: 1.6;">
@@ -258,8 +245,8 @@
                                             </p>
                                         </div>
                                     </div>
+                                    @include('admin.modals.editar-plato')
                                 </article>
-
                             @endforeach
                         </div>
                     @endif
@@ -273,6 +260,8 @@
     @include('admin.modals.gestion-categorias')
     @include('admin.modals.agregar-plato')
     @include('admin.modals.listaPlatosOcultos')
+
+
 
     <script>
         /* ── Search / filter ── */
@@ -310,7 +299,6 @@
             }
         })();
 
-        /* ── Delete plate ── */
         function borrarPlato(idPlato) {
             if (!confirm('¿Estás seguro de que quieres borrar este plato para siempre?')) return;
 
@@ -340,7 +328,57 @@
             });
         }
 
-        /* ── Reactivate hidden plate (called from modalPlatosOcultos) ── */
+        /* ── Toggle invisible (Sin recargar la página) ── */
+        async function toggleSilencioso(checkbox, idPlato) {
+            const form = checkbox.closest('form');
+            const tarjeta = document.getElementById('tarjeta-plato-' + idPlato);
+            const label = form.querySelector('.form-check-label');
+
+            // 1. Bloqueamos el switch un milisegundo para que no hagan doble clic
+            checkbox.disabled = true;
+
+            try {
+                // 2. Enviamos la orden a Laravel en secreto (AJAX)
+                await fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+
+                // 3. MAGIA VISUAL: Actualizamos la tarjeta al instante
+                const estaActivo = checkbox.checked;
+
+                // Cambiar el texto y color del label
+                label.textContent = estaActivo ? 'Visible' : 'Oculto';
+                label.className = `form-check-label small fw-bold ${estaActivo ? 'text-success' : 'text-danger'}`;
+
+                if (tarjeta) {
+                    // Cambiar la chapita (badge) superior
+                    const badge = tarjeta.querySelector('.d-flex .badge');
+                    if (badge) {
+                        badge.textContent = estaActivo ? 'Disponible' : 'Oculto';
+                        badge.style.backgroundColor = estaActivo ? '#10B981' : '#EF4444';
+                    }
+
+                    // Cambiar la línea de color de arriba de la tarjeta
+                    const innerCard = tarjeta.querySelector('.card');
+                    if (innerCard) {
+                        innerCard.style.borderTopColor = estaActivo ? '#10B981' : '#EF4444';
+                    }
+                }
+
+                // Desbloqueamos el switch
+                checkbox.disabled = false;
+
+            } catch (error) {
+                console.error('Error:', error);
+                // Si falla, devolvemos el switch a su estado original
+                checkbox.checked = !checkbox.checked;
+                checkbox.disabled = false;
+                alert('Hubo un problema de conexión. Inténtalo de nuevo.');
+            }
+        }
+
         function reactivarPlatoSilencioso(idPlato, botonReactivar) {
             const textoOriginal = botonReactivar.innerHTML;
             botonReactivar.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
@@ -356,7 +394,6 @@
             .then(function (response) { return response.json(); })
             .then(function (data) {
                 if (data.success) {
-                    /* Remove row from modal */
                     const filaModal = document.getElementById('fila-plato-oculto-' + idPlato);
                     if (filaModal) {
                         filaModal.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
@@ -365,13 +402,12 @@
                         setTimeout(function () { filaModal.remove(); }, 300);
                     }
 
-                    /* Update main card in-place */
                     const tarjetaPrincipal = document.getElementById('tarjeta-plato-' + idPlato);
                     if (tarjetaPrincipal) {
                         const innerCard = tarjetaPrincipal.querySelector('.card');
                         if (innerCard) innerCard.style.borderTopColor = '#10B981';
 
-                        const badge = tarjetaPrincipal.querySelector('.badge');
+                        const badge = tarjetaPrincipal.querySelector('.d-flex .badge');
                         if (badge) {
                             badge.textContent = 'Disponible';
                             badge.style.backgroundColor = '#10B981';
@@ -383,7 +419,7 @@
                         const switchLabel = tarjetaPrincipal.querySelector('.form-check-label');
                         if (switchLabel) {
                             switchLabel.textContent = 'Visible';
-                            switchLabel.classList.replace('text-danger', 'text-success');
+                            switchLabel.className = 'form-check-label small fw-bold text-success';
                         }
                     }
                 }

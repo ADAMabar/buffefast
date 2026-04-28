@@ -5,13 +5,12 @@
     <div class="p-3 mb-5 pb-5">
 
         <div class="d-flex gap-2 mb-4">
-            <button type="submit" class="btn btn-outline-secondary w-100 rounded-pill fw-bold shadow-sm btn-oscurecer" style="transition: all 0.3s ease;">
-                <i class="bi bi-bell-fill text-warning me-1"></i> Llamar Camarero
-            </button>
-      
-            <button type="submit" class="btn btn-outline-secondary w-100 rounded-pill fw-bold shadow-sm btn-oscurecer" style="transition: all 0.3s ease;">
+        <form action="{{ route('cliente.cuenta.pedir') }}" method="POST" class="w-100">
+            @csrf
+            <button type="submit" class="btn btn-outline-secondary w-100 rounded-pill fw-bold shadow-sm btn-oscurecer">
                 <i class="bi bi-receipt me-1"></i> Pedir la Cuenta
             </button>
+        </form>
         </div>
 
         <h4 class="fw-bold mb-3">Historial de Pedidos</h4>

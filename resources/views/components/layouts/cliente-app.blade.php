@@ -109,28 +109,118 @@
 <body>
     <div class="mobile-container">
 
-        {{-- Alertas de éxito (flash messages) y errores --}}
-        <div class="px-3 mt-3 w-100 position-absolute" style="z-index: 1040; top: 70px;">
+       
+        <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1055; margin-top: 60px;">
+            
             @if ($message = Session::get('success'))
-                <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-4 border-success-subtle" role="alert">
-                    <p class="mb-0 fw-medium">{{ $message }}</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
+                    <div class="d-flex">
+                        <div class="toast-body fw-medium"><i class="bi bi-check-circle me-2"></i>{{ $message }}</div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
                 </div>
             @endif
-
             @if ($message = Session::get('error'))
-                <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-4 border-danger-subtle" role="alert">
-                    <p class="mb-0 fw-medium">{{ $message }}</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="toast align-items-center text-bg-danger border-0 show" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+                <div class="d-flex">
+                    <div class="toast-body fw-medium">
+                        <i class="bi bi-exclamation-triangle me-2"></i>{{ $message }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
+            </div>
             @endif
+            <div id="toastPlantilla" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000" style="display: none;">
+                <div class="d-flex">
+                    <div class="toast-body fw-medium" id="toastMensaje"><i class="bi bi-check-circle me-2"></i>Añadido al carrito</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+            
         </div>
-
-        {{-- Aquí se inyectará el contenido de carta, carrito y cuenta --}}
         {{ $slot }}
 
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            
+            
+            const toasts = document.querySelectorAll('.toast.show');
+            toasts.forEach(toastNode => {
+                const toast = new bootstrap.Toast(toastNode);
+                setTimeout(() => toast.hide(), 3000);
+            });
+
+            const formulariosCarrito = document.querySelectorAll('form[action*="carrito/add"]');
+            
+            formulariosCarrito.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault(); 
+                    // Efecto visual: animar el botón un poquito
+                    const btn = this.querySelector('button');
+                    const iconoOriginal = btn.innerHTML;
+                    btn.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"></div>';
+
+                    // Enviar los datos por detrás
+                    fetch(this.action, {
+                        method: 'POST',
+                        body: new FormData(this)
+                    })
+                    .then(() => {
+                        const formData = new FormData(this);
+                        const platoId = formData.get('plato_id');
+
+                            // Buscamos el badge por el ID que acabamos de crear arriba
+                        const badge = document.getElementById(`badge-cantidad-${platoId}`);
+                            
+                        if (badge) {
+                            const numSpan = badge.querySelector('.cantidad-num');
+                            let cantidadActual = parseInt(numSpan.innerText) || 0;
+                                
+                            numSpan.innerText = cantidadActual + 1;  
+                                // Lo hacemos visible (por si estaba en display: none)
+                            badge.style.display = 'inline-block';
+                            }
+                        // Restaurar el botón
+                        btn.innerHTML = '<i class="bi bi-check-lg"></i>';
+                        setTimeout(() => btn.innerHTML = iconoOriginal, 1500);
+
+                        // Crear y mostrar una notificación flotante nueva
+                        const toastEl = document.getElementById('toastPlantilla').cloneNode(true);
+                        toastEl.style.display = 'block';
+                        document.querySelector('.toast-container').appendChild(toastEl);
+                        
+                        const toast = new bootstrap.Toast(toastEl);
+                        toast.show();
+
+                        // Destruir el toast del HTML cuando termine para no acumular basura
+                        toastEl.addEventListener('hidden.bs.toast', () => toastEl.remove());
+
+                        const badgeCarrito = document.querySelector('a[href*="carrito"] .bg-orange');
+                        if (badgeCarrito) {
+                            //si existe el badgeCarrito pues no hago nada
+                        } else {
+                            // Crear el badge si no existe
+                            const enlaceCarrito = document.querySelector('a[href*="carrito"]');
+                            if (enlaceCarrito) {
+                                const nuevoBadge = document.createElement('span');
+                                nuevoBadge.className = 'position-absolute translate-middle p-1 rounded-circle bg-orange border border-2 border-white';
+                                nuevoBadge.style.cssText = 'top: 8px; right: 20%;';
+                                nuevoBadge.innerHTML = '<span class="visually-hidden">Nuevos items</span>';
+                                enlaceCarrito.appendChild(nuevoBadge);
+                            }
+                        }
+                    })
+                    .catch(() => {
+                        btn.innerHTML = iconoOriginal;
+                        alert('Error al añadir al carrito. Revisa tu conexión.');
+                    });
+                });
+            });
+
+        });
+    </script>
 </body>
 
 </html>

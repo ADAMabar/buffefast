@@ -7,6 +7,7 @@
     <title>BuffeFast - Staff Login</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
@@ -95,6 +96,22 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    window.addEventListener('pageshow', function(event) {
+        const flag = "recarga_realizada_" + window.location.pathname;
+        
+        if (!sessionStorage.getItem(flag) || event.persisted) {
+            setTimeout(function() {
+                sessionStorage.setItem(flag, "true");
+                window.location.reload();
+            }, 1000);
+        } else {
+            sessionStorage.removeItem(flag);
+        }
+    });
+    </script>
+
 </body>
 
 </html>

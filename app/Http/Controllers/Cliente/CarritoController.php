@@ -38,8 +38,8 @@ class CarritoController extends Controller
             $cliente_id = session('cliente_id');
             $sesion = Sesion::with('mesa')->find($sesion_id);
             
-            // 3. Lógica del temporizador (Anti-spam de comandas)
-            $minutosEspera = (int) Configuracion('tiempo_ronda_minutos',10);
+            // 3. Lógica del temporizador 
+            $minutosEspera = (int) Configuracion('tiempo_ronda_minutos',5);
             $ultimoPedido = Pedido::where('sesion_id', $sesion_id)->where('cliente_id', $cliente_id)->latest()->first();
             $segundosRestantes = 0;
             

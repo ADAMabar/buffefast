@@ -21,10 +21,10 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             // Redirigir según el rol con el mensaje de éxito
-            if (Auth::user()->rol === 'cocina') {
-                return redirect()->intended('/cocina')
-                    ->with('success', '¡Sesión iniciada correctamente! Bienvenido a la cocina.');
-            }
+        if (Auth::user()->rol === 'cocina') {
+            return redirect()->to('/cocina') 
+        ->with('success', '¡Sesión iniciada correctamente! Bienvenido a la cocina.');
+}
 
             return redirect()->intended('/dashboard')
                 ->with('success', '¡Sesión iniciada correctamente!');

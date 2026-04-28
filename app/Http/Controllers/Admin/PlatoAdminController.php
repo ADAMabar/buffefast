@@ -87,9 +87,7 @@ class PlatoAdminController extends Controller
         }
     }
 
-    /**
-     * Reactiva un plato (Llamada AJAX).
-     */
+    
     public function reactivar(Plato $plato)
     {
         try {
@@ -103,6 +101,53 @@ class PlatoAdminController extends Controller
         } catch (\Exception $e) {
             Log::error("Error reactivando plato {$plato->id}: " . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Error al reactivar el plato'], 500);
+        }
+    }
+
+
+    public function update(Request $request, $id)
+    {
+        try {
+            // 1. Buscamos el plato en la base de datos
+            $plato = Plato::findOrFail($id);
+
+            // 2. Validamos los datos (puedes usar un FormRequest si lo prefieres)
+            $request->validate([
+                'nombre' => 'required|string|max:255',
+                'categoria_id' => 'required|exists:categorias,id',
+                'precio' => 'required|numeric|min:0',
+                'descripcion' => 'nullable|string',
+                'imagen' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            ]);
+
+            // 3. Preparamos los datos para actualizar
+            $datosActualizar = [
+                'nombre' => $request->nombre,
+                'categoria_id' => $request->categoria_id,
+                'descripcion' => $request->descripcion,
+                'precio' => $request->precio,
+            ];
+
+            // 4. ¿Ha subido una foto nueva?
+            if ($request->hasFile('imagen')) {
+                // Borramos la foto vieja del servidor para no acumular basura
+                if ($plato->imagen) {
+                    Storage::disk('public')->delete($plato->imagen);
+                }
+                
+                // Guardamos la foto nueva y la añadimos a los datos a actualizar
+                $datosActualizar['imagen'] = $request->file('imagen')->store('platos', 'public');
+            }
+
+            // 5. Actualizamos el plato de golpe
+            $plato->update($datosActualizar);
+
+            return back()->with('success', '¡Plato actualizado con éxito!');
+
+        } catch (\Exception $e) {
+            Log::error('Error al actualizar plato: ' . $e->getMessage());
+            // Si falla, le devolvemos los errores específicos para ese modal
+            return back()->withErrors(['edit_plato_'.$id => 'Hubo un problema al actualizar el plato.'])->withInput();
         }
     }
 }

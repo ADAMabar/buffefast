@@ -65,42 +65,33 @@ class adminController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Mesa $mesa)
-    {
-        try {
-            // Seguridad extra: comprobamos si tiene sesiones EN CURSO
-            $ocupada = $mesa->sesiones()
-                ->whereIn('estado', ['activa', 'solicitando_cuenta'])
-                ->exists();
+  
 
-            if ($ocupada) {
-                return back()->with('error', "¡No puedes borrar la Mesa {$mesa->numero} porque está ocupada!");
-            }
+public function destroy(Mesa $mesa)
+{
+    try {
+        
+        $activa = $mesa->sesiones()
+            ->whereIn('estado', ['activa', 'solicitando_cuenta'])
+            ->exists();
 
-            // Usamos una transacción porque vamos a borrar muchos datos relacionados
-            DB::transaction(function () use ($mesa) {
-                foreach ($mesa->sesiones as $sesion) {
-                    foreach ($sesion->pedidos as $pedido) {
-                        $pedido->platos()->detach();
-                        $pedido->delete();
-                    }
-                    $sesion->clientes()->delete();
-                    $sesion->delete();
-                }
-
-                $mesa->delete();
-            });
-
-            return back()->with('success', "Mesa {$mesa->numero} y su historial eliminados.");
-
-        } catch (\Exception $e) {
-            Log::error('Error al eliminar mesa: ' . $e->getMessage());
-            return back()->with('error', 'Hubo un error al eliminar la mesa y su historial.');
+        if ($activa) {
+            return back()->with('error', "¡No puedes borrar la Mesa {$mesa->numero} porque está ocupada!");
         }
+
+        // Desvincular sesiones (historial) en lugar de borrarlas
+        $mesa->sesiones()->update(['mesa_id' => null]);
+        
+        // Borrar solo la mesa
+        $mesa->delete();
+
+        return back()->with('success', "Mesa {$mesa->numero} eliminada. El historial de pedidos se ha conservado.");
+
+    } catch (\Exception $e) {
+        Log::error('Error al eliminar mesa: ' . $e->getMessage());
+        return back()->with('error', 'Hubo un error al eliminar la mesa.');
     }
+}
 
     // --- MÉTODOS PERSONALIZADOS (ACCIONES) ---
 

@@ -12,11 +12,13 @@ use App\Http\Controllers\Cliente\CuentaController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\ClienteAdminController;
-use App\Http\Controllers\Cocina\CocinaController;
 use App\Http\Controllers\Admin\PlatoAdminController;
 use App\Http\Controllers\Admin\CategoriaAdminController;
 use App\Http\Controllers\Admin\ConfiguracionAdminController;
 use App\Http\Controllers\Admin\HistorialVentasController;
+
+use App\Http\Controllers\Cocina\CocinaController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +39,7 @@ Route::get('/logout-cliente', [ClienteAuthController::class, 'destroy'])->name('
 
 Route::get('/carta', [MenuController::class, 'index'])->name('cliente.carta');
 Route::get('/cuenta', [CuentaController::class, 'index'])->name('cliente.cuenta');
+  Route::post('/cuenta/pedir', [CuentaController::class, 'pedirCuenta'])->name('cliente.cuenta.pedir');
 
 Route::get('/carrito', [CarritoController::class, 'index'])->name('cliente.carrito');
 Route::post('/carrito/add/{id}', [CarritoController::class, 'store'])->name('cliente.carrito.add');
@@ -51,7 +54,7 @@ Route::get('/nosotros', [CuentaController::class, 'indexSobreNosotros'])->name('
 */
 
 // ==========================================
-// 🚪 SIN LOGUEAR (Público para el Staff)
+//  SIN LOGUEAR (Público para el Staff)
 // ==========================================
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -60,7 +63,7 @@ Route::middleware('guest')->group(function () {
 
 
 // ==========================================
-// 🔒 PROTEGIDAS (Solo personal logueado)
+// PROTEGIDAS (Solo personal logueado)
 // ==========================================
 Route::middleware('auth')->group(function () {
 
@@ -69,7 +72,7 @@ Route::middleware('auth')->group(function () {
 
 
     // --------------------------------------------------------
-    // 🛡️ ZONA VIP: SOLO ADMINISTRADORES
+    //  ZONA VIP: SOLO ADMINISTRADORES
     // --------------------------------------------------------
     Route::middleware(['can:es-admin'])->group(function () {
 
@@ -92,7 +95,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/admin/carta/plato/store', [PlatoAdminController::class, 'store'])->name('admin.plato.store');
         Route::delete('/admin/carta/plato/{plato}/eliminar', [PlatoAdminController::class, 'destroy']);
         Route::patch('/admin/carta/plato/{plato}/reactivar', [PlatoAdminController::class, 'reactivar'])->name('admin.plato.reactivar');
-        
+        Route::put('/admin/carta/plato/{id}/actualizar', [PlatoAdminController::class, 'update'])->name('admin.plato.update');
         // --- Rutas de Historial de Ventas ---
         Route::get('/historial', [HistorialVentasController::class, 'index'])->name('admin.historial');
         Route::post('/admin/mesa/{mesa}/cobrar', [HistorialVentasController::class, 'cobrar'])->name('admin.mesa.cobrar');
@@ -111,15 +114,11 @@ Route::middleware('auth')->group(function () {
     });
 
 
-    // --------------------------------------------------------
-    // 🍳 ZONA DE COCINA: SOLO CHEFS
-    // --------------------------------------------------------
+   
     Route::middleware(['can:es-cocina'])->group(function () {
-        
-        // --- Rutas de Cocina ---
-        Route::get('/cocina', [CocinaController::class, 'index'])->name('cocina.index');
-        Route::patch('/cocina/pedido/{pedido}/estado', [CocinaController::class, 'cambiarEstado'])->name('cocina.pedido.estado');
-
+    Route::get('/cocina', [CocinaController::class, 'inicio'])->name('cocina.inicio');
+    Route::get('/cocina/ver-tablero', [CocinaController::class, 'verTablero'])->name('cocina.verTablero');
+    Route::post('/cocina/pedido/{pedido}/actualizar-estado', [CocinaController::class, 'actualizarEstado'])->name('cocina.actualizarEstado');     
     });
 
 });
@@ -133,44 +132,4 @@ Route::get('/salida-de-emergencia', function () {
 });
 
 
-    // ============================================================
-// CAMPOS EN LA TABLA `configuracion` QUE SE USAN
-// (para que sepas qué claves espera el sistema)
-// ============================================================
-//
-// Identidad:
-//   nombre_restaurante, eslogan, direccion, telefono, email_contacto
-//   color_primario, color_secundario, logo_url
-//   instagram, google_maps_url, wifi_nombre, wifi_clave
-//
-// Operativa:
-//   tiempo_ronda_minutos, limite_platos_ronda, rondas_maximas_sesion
-//   penalizacion_activa, precio_penalizacion, mensaje_penalizacion
-//   bypass_temporizador, cliente_puede_cancelar
-//
-// Precios:
-//   precio_buffet_adulto, precio_buffet_nino, precio_buffet_bebe
-//   porcentaje_impuestos, texto_ticket_pie
-//   pago_efectivo, pago_tarjeta, pago_bizum
-//
-// Cocina:
-//   alerta_amarilla_min, alerta_roja_min, pedidos_servidos_visibles
-//   sonido_cocina, tipo_sonido, refresco_cocina_seg
-//   cocina_mostrar_nombre_cliente, aceptacion_automatica
-//
-// App Cliente:
-//   mensaje_bienvenida, mensaje_pedido_confirmado, mensaje_cuenta_solicitada
-//   aviso_alergenos, aviso_legal_carta
-//   mostrar_precios_carta, mostrar_historial_cliente, permitir_solicitar_cuenta
-//   alergenos_aviso_visible, mostrar_wifi_redes
-//   modo_mantenimiento, mensaje_cierre_temporal
-//
-// Seguridad:
-//   longitud_codigo_mesa, expiracion_sesion_min, intentos_codigo_erroneo
-//   bloqueo_ip_activo, registro_log_pedidos, notificacion_email_admin
-//   email_notificaciones_admin
-//
-// Sistema:
-//   modo_panico
-
-
+    

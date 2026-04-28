@@ -20,14 +20,6 @@
                 </button>
             </form>
 
-            <form action="{{ route('admin.mesa.desocupar', $mesa->id) }}" method="POST">
-                @csrf
-                <button class="btn btn-warning fw-bold shadow-sm rounded-pill px-4 py-2">
-                    <i class="bi bi-door-closed me-1"></i> Cerrar
-                </button>
-            </form>
-
-
             <button type="button" class="btn btn-success fw-bold px-4 fs-5" data-bs-toggle="modal"
                 data-bs-target="#modalCobrar">
                 <i class="bi bi-cash-coin me-2"></i>Cobrar Mesa
@@ -59,10 +51,10 @@
         <div class="col-12 col-md-4">
             <div class="card border-0 bg-dark text-white shadow-sm rounded-4 h-100 p-2">
                 <div class="card-body">
-                    <h6 class="text-white-50 fw-bold mb-1"><i class="bi bi-currency-euro"></i>Total extras no
+                    <h6 class="text-white-50 fw-bold mb-1"><i class="bi bi-currency-euro"></i>Total junto con extras no
                         incluidos en el buffet
                     </h6>
-                    <h2 class="fw-bold mb-0">{{ $totalMesa}}</h2>
+                    <h2 class="fw-bold mb-0">{{ number_format($totalMesa, 2, '.', ',') }}</h2>
                 </div>
             </div>
         </div>
@@ -110,7 +102,7 @@
                                     class="bg-success bg-opacity-10 px-3 py-2 rounded-3 border border-success border-opacity-25">
                                     <span class="text-success small fw-bold text-uppercase me-1">Total:</span>
                                     <span
-                                        class="fs-4 fw-bold text-success">{{ number_format($datosCliente['total_euros'], 2, ',', '.') }}
+                                        class="fs-4 fw-bold text-success">{{ number_format($datosCliente['total_euros'], 2, '.', ',') }}
                                         €</span>
                                 </div>
                             </div>
@@ -157,6 +149,23 @@
             @endif
         </div>
     </div>
+    <br>
+    <form action="{{ route('admin.mesa.desocupar', $mesa->id) }}" method="POST">
+                @csrf
+                <button id="btnCerrar" class="btn btn-warning fw-bold shadow-sm rounded-pill px-4 py-2">
+                    <i class="bi bi-door-closed me-1"></i> Cerrar
+                </button>
+            </form>
 
     @include('admin.modals.cobrar-mesa')
+
+    <script>
+        const btnCerrar = document.getElementById('btnCerrar');
+
+        btnCerrar.addEventListener('click', function(event) {
+    const confirmacion = confirm("¿Estás seguro de que quieres cerrar esta mesa sin cobrarla?, Se perderá toda la información de la sesion");
+    if (!confirmacion) {
+        event.preventDefault();
+    }})
+    </script>   
 </x-layouts.admin>

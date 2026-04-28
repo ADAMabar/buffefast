@@ -104,7 +104,7 @@
 
                             <div class="mt-auto">
                                 @if($estado == 'cuenta')
-                                    <a href="#" class="btn w-100 fw-bold rounded-3 py-2 text-white"
+                                    <a href="{{ route('admin.mesa.show', $mesa->id) }}" class="btn w-100 fw-bold rounded-3 py-2 text-white"
                                         style="background-color: {{ $color }}; text-decoration: none;">
                                         <i class="bi bi-receipt"></i> Cobrar y Cerrar
                                     </a>

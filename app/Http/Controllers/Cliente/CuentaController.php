@@ -74,4 +74,24 @@ class CuentaController extends Controller
         return view('cliente.sobreNosotros', compact('sesion', 'rondaActual'));
 
     }
+
+public function pedirCuenta(Request $request)
+{
+    $sesion_id = session('sesion_id');
+    
+    if (!$sesion_id) {
+        return redirect()->route('cliente.inicio')->with('error', 'Sesión no válida.');
+    }
+ 
+    $sesion = Sesion::find($sesion_id);
+ 
+    if (!$sesion || $sesion->estado === 'cerrada') {
+        return redirect()->route('cliente.inicio')->with('error', 'La mesa ya está cerrada.');
+    }
+ 
+    // Cambiar estado a "solicitando_cuenta"
+    $sesion->update(['estado' => 'solicitando_cuenta']);
+ 
+    return back()->with('success', 'Has solicitado la cuenta. Un camarero vendrá enseguida.');
+}
 }

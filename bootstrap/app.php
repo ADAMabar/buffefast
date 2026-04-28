@@ -19,7 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
             }
             
             if (auth()->user()->rol === 'cocina') {
-                return route('cocina.index'); 
+                return route('cocina.inicio'); 
             }
 
             return '/';

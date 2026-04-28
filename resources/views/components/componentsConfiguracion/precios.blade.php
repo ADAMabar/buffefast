@@ -43,9 +43,7 @@
                                     
                                     <input type="radio" class="btn-check iva-radio" name="porcentaje_impuestos" id="ivaOtro" autocomplete="off" value="otro" {{ !in_array($iva, ['0','4','10','21']) ? 'checked' : '' }}>
                                     <label class="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-medium" for="ivaOtro">Otro</label>
-                                </div>
-
-                                <div class="input-group mt-2" id="ivaCustomDiv" style="width: 150px; {{ !in_array($iva, ['0','4','10','21']) ? '' : 'display:none;' }}">
+                                
                                     <input type="number" class="form-control form-control-sm iva-custom-input" name="porcentaje_impuestos_custom" 
                                         value="{{ !in_array($iva, ['0','4','10','21']) ? $iva : '' }}" min="0" max="100" placeholder="Ej: 7.5">
                                     <span class="input-group-text bg-light text-muted py-0">%</span>

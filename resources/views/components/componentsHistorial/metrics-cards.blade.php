@@ -51,7 +51,7 @@
                     @if($metricas['num_anuladas'] > 0)
                         <span style="color:#EF4444">{{ $metricas['num_anuladas'] }} anuladas</span>
                     @else
-                        IVA: {{ number_format($metricas['total_iva'],2,',','.') }}€
+                        IVA: {{ Configuracion('porcentaje_impuestos') }}%
                     @endif
                 </div>
             </div>

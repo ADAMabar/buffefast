@@ -92,9 +92,9 @@ class HistorialVentasController extends Controller
             'total_bizum' => $raw->total_bizum ?? 0,
             'total_transferencia' => $raw->total_transferencia ?? 0,
         ];
-
-        // ── Variación vs periodo anterior ────────────────────────────
+        
         $durSeg = $fechaDesde->diffInSeconds($fechaHasta);
+       
         $totalAnterior = Venta::whereBetween('created_at', [
             $fechaDesde->copy()->subSeconds($durSeg),
             $fechaDesde->copy()->subSecond(),
@@ -104,7 +104,7 @@ class HistorialVentasController extends Controller
             ? round((($totalFacturado - $totalAnterior) / $totalAnterior) * 100, 1)
             : null;
 
-        // ── Gráfica: por hora (≤31 días) o por día de semana (>31) ──
+        //  Gráfica: por hora (≤31 días) o por día de semana (>31) ─
         $diasRango = $fechaDesde->diffInDays($fechaHasta);
 
         $ventasPorHora = $applyFiltros(
@@ -115,7 +115,7 @@ class HistorialVentasController extends Controller
                 : 'DAYOFWEEK(created_at) AS franja, SUM(total) AS total_franja'
             )->groupBy('franja')->orderBy('franja')->pluck('total_franja', 'franja');
 
-        // ── Top 5 platos más pedidos ─────────────────────────────────
+        //  Top 5 platos más pedidos 
         $topPlatos = DB::table('pedido_platos as pp')
             ->join('platos as pl', 'pl.id', '=', 'pp.plato_id')
             ->join('pedidos as pe', 'pe.id', '=', 'pp.pedido_id')
@@ -135,7 +135,7 @@ class HistorialVentasController extends Controller
             ->limit(5)
             ->get();
 
-        // ── Top 5 mesas más rentables ────────────────────────────────
+        //  Top 5 mesas más rentables
         $topMesas = Venta::whereBetween('created_at', [$fechaDesde, $fechaHasta])
             ->where('anulada', false)->whereNotNull('numero_mesa')
             ->selectRaw('numero_mesa, SUM(total) AS total_mesa, COUNT(*) AS num_servicios,
@@ -143,6 +143,8 @@ class HistorialVentasController extends Controller
             ->groupBy('numero_mesa')->orderByDesc('total_mesa')->limit(5)->get();
 
         $cajas = Caja::where('activa', true)->orderBy('nombre')->get();
+        
+        
 
         return view('admin.historialVentas', compact(
             'ventas',
@@ -159,10 +161,8 @@ class HistorialVentasController extends Controller
             'totalAnterior'
         ));
     }
-
-    // ================================================================
-    // SHOW — JSON para el modal de detalle (AJAX)
-    // ================================================================
+    //  JSON para el modal de detalle (AJAX)
+   
     public function show(Venta $venta)
     {
         $venta->load(['sesion.mesa', 'caja', 'usuario']);
@@ -341,23 +341,30 @@ class HistorialVentasController extends Controller
                 ->with(['platos' => fn($q) => $q->withPivot('cantidad')])
                 ->get();
 
-            $totalMesa = $pedidos->sum(function($pedido) {
-                return $pedido->platos->sum(function($plato) {
-                    return $plato->precio * $plato->pivot->cantidad;
+            $porcentajeIva = configuracion('porcentaje_impuestos', 10);
+            $multiplicadorIva = 1 + ($porcentajeIva / 100);
+
+            $precioBase = Configuracion('precio_buffet_adulto',10);
+            $totalMesa = $pedidos->sum(function($pedido) use ($multiplicadorIva) {
+                return $pedido->platos->sum(function($plato) use ($multiplicadorIva) {
+                    
+                    $subtotal = $plato->precio * $plato->pivot->cantidad;
+                    return $subtotal * $multiplicadorIva; 
+                    
                 });
             });
-            
-            // 6. Contar los comensales (con el truco Senior)
+
+            $totalMenu = $totalMesa + $precioBase;         
             $comensales = $sesionActiva->clientes()->count() ?: 1;
-            $ivaAplicada = Configuracion::get();
-            // 7. Crear el ticket en la tabla Ventas
+         
+            
             Venta::create([
                 'sesion_id'      => $sesionActiva->id,
                 'numero_mesa'    => $mesa->numero,
                 'num_comensales' => $comensales,
                 'subtotal'       => $totalMesa,
-                'iva'            => 0.00, // De momento
-                'total'          => $totalMesa,
+                'iva'            => $porcentajeIva,
+                'total'          => $totalMenu,
                 'metodo_pago'    => $request->metodo_pago,
                 'user_id'        => auth()->id(),
                 'caja_id'        => $request->caja_id,
@@ -365,16 +372,10 @@ class HistorialVentasController extends Controller
                 'anulada'        => false,
             ]);
 
-            // 8. Liberar la mesa
             $sesionActiva->update(['estado' => 'cerrada']);
 
-            // 9. Confirmar todo y guardar en base de datos
             DB::commit();
 
-
-            
-
-            // 10. Redirigir al usuario con el mensaje verde
             return redirect()->route('admin.mesas')
                 ->with('success', '¡Caja sonando! 💸 Mesa cobrada correctamente.');
 

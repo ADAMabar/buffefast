@@ -19,11 +19,14 @@
 
         <div class="row row-cols-2 g-3 mb-5 pb-5">
             @forelse($platos as $plato)
-                <div class="col">
+             <div class="col">
                     <div class="card h-100 border-0 shadow-sm rounded-4 card-sushi">
+                        
+                        {{-- AQUÍ ESTÁ EL ARREGLO: Quitamos el ">" traicionero --}}
                         <div class="ratio ratio-1x1 bg-light rounded-top-4 overflow-hidden">
-                            <img src="{{ $plato->imagen ?? 'https://placehold.co/400x400/eeeeee/A3A8B8?text=🍣' }}"
-                                class="object-fit-cover w-100 h-100" alt="{{ $plato->nombre }}">
+                            <img src="{{ $plato->imagen ? asset('storage/' . $plato->imagen) : 'https://placehold.co/400x400/eeeeee/A3A8B8?text=🍣' }}"
+                                 class="object-fit-cover w-100 h-100" 
+                                 alt="{{ $plato->nombre }}">
                         </div>
 
                         <div class="card-body p-2 px-3 pb-3 position-relative">
@@ -33,7 +36,6 @@
                             </p>
                             <br>
 
-
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="badge bg-success rounded-pill">{{ $plato->precio }} €</span>
                             </div>
@@ -42,15 +44,15 @@
                                 $cantidadEnCarrito = $carritoActual[$plato->id]['cantidad'] ?? 0;
                             @endphp
 
-                           
-                            @if($cantidadEnCarrito > 0)
-                                <span class="badge bg-success">
-                                    En el carrito: {{ $cantidadEnCarrito }}
-                                </span>
-                            @endif
-                            
+                          <span class="badge bg-success mt-2" 
+                            id="badge-cantidad-{{ $plato->id }}" 
+                            style="{{ $cantidadEnCarrito > 0 ? '' : 'display: none;' }}">
+                            En el carrito: <span class="cantidad-num">{{ $cantidadEnCarrito }}</span>
+                          </span>
+
                             <form action="{{ route('cliente.carrito.add', $plato->id) }}" method="POST">
                                 @csrf
+                                    <input type="hidden" name="plato_id" value="{{ $plato->id }}">
                                 <button
                                     class="btn position-absolute d-flex align-items-center justify-content-center p-0 shadow-sm"
                                     style="bottom: 10px; right: 10px; width: 32px; height: 32px; border-radius: 50%; background-color: var(--primary-orange); color: white; border: none;">

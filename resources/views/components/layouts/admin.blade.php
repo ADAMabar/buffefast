@@ -413,6 +413,15 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
+        @if ($message = Session::get('error'))
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-4 border-0 mb-4" role="alert"
+            style="background-color: #FEF2F2; color: #991B1B;">
+            <p class="mb-0 fw-medium">
+                <i class="bi bi-exclamation-circle-fill me-2"></i>{{ $message }}
+            </p>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        @endif
 
         {{ $slot }}
     </main>

@@ -34,7 +34,7 @@
                     @endif
                     <div class="card border-0 shadow-sm rounded-4">
                         <div class="card-body p-2 d-flex align-items-center">
-                            <img src="{{ $item['imagen'] ?? 'https://placehold.co/100x100/eeeeee/A3A8B8?text=🍣' }}"
+                           <img src="{{ $item['imagen'] ? asset('storage/' . $item['imagen']) : 'https://placehold.co/100x100/eeeeee/A3A8B8?text=🍣' }}"
                                 class="rounded-3 object-fit-cover" style="width: 70px; height: 70px;"
                                 alt="{{ $item['nombre'] }}">
 
