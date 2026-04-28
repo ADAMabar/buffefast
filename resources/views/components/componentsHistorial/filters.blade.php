@@ -54,7 +54,6 @@
                      request('metodo_pago')=='efectivo'      ?'selected':'' }}>💵 Efectivo</option>
                     <option value="tarjeta"       {{ request('metodo_pago')=='tarjeta'       ?'selected':'' }}>💳 Tarjeta</option>
                     <option value="bizum"         {{ request('metodo_pago')=='bizum'         ?'selected':'' }}>📱 Bizum</option>
-                    <option value="transferencia" {{ request('metodo_pago')=='transferencia' ?'selected':'' }}>🏦 Transferencia</option>
                 </select>
 
                 <select name="estado" class="form-select form-select-sm border-0 bg-light fw-bold w-auto rounded-3">

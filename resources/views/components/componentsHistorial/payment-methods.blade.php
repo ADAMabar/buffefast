@@ -9,7 +9,6 @@
                     'efectivo'      => ['💵', $metricas['total_efectivo'],     '#059669'],
                     'tarjeta'       => ['💳', $metricas['total_tarjeta'],      '#2563eb'],
                     'bizum'         => ['📱', $metricas['total_bizum'],        '#7c3aed'],
-                    'transferencia' => ['🏦', $metricas['total_transferencia'],'#d97706'],
                 ];
             @endphp
             <div class="d-flex gap-2 flex-wrap">

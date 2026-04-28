@@ -1,29 +1,23 @@
 <script>
-    // 💡 AYUDANTE: Transforma cualquier número a formato "10.50€" automáticamente
     const eur = (val) => parseFloat(val || 0).toFixed(2) + '€';
 
-    // ==========================================
     // 1. FILTROS DE PERIODO
-    // ==========================================
     function setPeriodo(valor, el) {
         document.getElementById('inputTiempo').value = valor;
         
-        // Quita el active al anterior y se lo pone al nuevo
+        // Quita el active al anterior 
         document.querySelector('.pill-filter.active')?.classList.remove('active');
         el.classList.add('active');
 
-        // Muestra/Oculta campos extra
+        // Muestra/Oculta 
         const esEspecial = ['mes_especifico', 'rango_custom'].includes(valor);
         document.getElementById('extraMesEspecifico').classList.toggle('d-none', valor !== 'mes_especifico');
         document.getElementById('extraRangoCustom').classList.toggle('d-none', valor !== 'rango_custom');
 
-        // Si no es un filtro de fecha manual, envía el formulario
+        //  envía el formulario
         if (!esEspecial) document.getElementById('formFiltros').submit();
     }
 
-    // ==========================================
-    // 2. MODAL DETALLE DE VENTA
-    // ==========================================
     function abrirDetalleTicket(id) {
         new bootstrap.Modal(document.getElementById('modalDetalle')).show();
         document.getElementById('modalBody').innerHTML = '<div class="text-center py-5">Cargando…</div>';
@@ -88,7 +82,7 @@
             ${v.observaciones ? `<div class="mt-3 p-2 bg-light rounded-3 small text-muted"><i class="bi bi-chat-left-text me-1"></i>${v.observaciones}</div>` : ''}
         `;
 
-        // Footer (Botón de anular)
+        
         document.getElementById('modalFooter').innerHTML = v.anulada ? '' : `
             <button type="button" class="btn btn-outline-secondary fw-bold rounded-pill px-3 me-auto" data-bs-dismiss="modal">Cerrar</button>
             <button type="button" class="btn btn-outline-danger fw-bold rounded-pill px-3" onclick="prepararAnulacion(${id}, '${v.numero_ticket}')">
@@ -96,9 +90,8 @@
             </button>`;
     }
 
-    // ==========================================
-    // 3. MODAL ANULAR TICKET
-    // ==========================================
+    
+    // MODAL ANULAR TICKET
     function prepararAnulacion(id, ticket) {
         bootstrap.Modal.getInstance(document.getElementById('modalDetalle')).hide();
         document.getElementById('ticketAnular').textContent = ticket;

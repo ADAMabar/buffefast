@@ -12,98 +12,224 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <style>
-        :root {
-            --bg-light: #F8F9FA;
-            --primary-orange: #FF7A00;
-            --primary-orange-hover: #E06B00;
-            --text-main: #1F2937;
-            --text-muted: #6B7280;
-        }
+   <style>
+    :root {
+        --bg-light: #F8F9FA;
+        --primary-orange: #FF7A00;
+        --primary-orange-hover: #E06B00;
+        --text-main: #1F2937;
+        --text-muted: #6B7280;
+    }
 
-        body {
-            background-color: var(--bg-light);
-            font-family: 'Inter', sans-serif;
-            color: var(--text-main);
-            display: flex;
-            justify-content: center;
-        }
+    body {
+        background-color: var(--bg-light);
+        font-family: 'Inter', sans-serif;
+        color: var(--text-main);
+        display: flex;
+        justify-content: center;
+        margin: 0;
+        min-height: 100vh;
+    }
 
+    .mobile-container {
+        width: 100%;
+        background-color: #FFFFFF;
+        min-height: 100vh;
+        position: relative;
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.05);
+        padding-bottom: 80px;
+        padding-top: 70px;
+        max-width: 100%;
+    }
+
+    /* Top Nav */
+    .top-nav {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        z-index: 1030;
+        border-bottom: 1px solid #E5E7EB;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    /* Bottom Nav */
+    .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background: #FFFFFF;
+        border-top: 1px solid #E5E7EB;
+        display: flex;
+        justify-content: space-around;
+        padding: 0.75rem 0;
+        z-index: 1030;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.02);
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .nav-item {
+        text-decoration: none;
+        color: var(--text-muted);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 0.75rem;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+    .nav-item i {
+        font-size: 1.25rem;
+        margin-bottom: 2px;
+    }
+
+    .text-orange {
+        color: var(--primary-orange) !important;
+    }
+
+    .bg-orange {
+        background-color: var(--primary-orange) !important;
+    }
+
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .hide-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .card-sushi {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card-sushi:active {
+        transform: scale(0.98);
+    }
+
+
+
+
+@media (pointer: fine) {
+    .hide-scrollbar {
+        -ms-overflow-style: auto;
+        scrollbar-width: thin; /* Firefox: barra delgada */
+        scrollbar-color: var(--primary-orange) #E5E7EB; /* Color Firefox */
+    }
+    
+    .hide-scrollbar::-webkit-scrollbar {
+        display: block;
+        height: 6px; /* Altura de la barra horizontal */
+    }
+    
+    .hide-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    
+    .hide-scrollbar::-webkit-scrollbar-thumb {
+        background-color: var(--primary-orange);
+        border-radius: 10px;
+    }
+}
+
+    /* ===== TABLET (576px - 991px) ===== */
+    @media (min-width: 576px) {
         .mobile-container {
-            width: 100%;
-            max-width: 480px;
-            background-color: #FFFFFF;
-            min-height: 100vh;
-            position: relative;
-            box-shadow: 0 0 40px rgba(0, 0, 0, 0.05);
-            padding-bottom: 80px;
-            /* Espacio para el bottom nav */
-            padding-top: 70px;
-            /* Espacio para el top nav */
-        }
-
-        /* Top Nav */
-        .top-nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            max-width: 480px;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            z-index: 1030;
-            border-bottom: 1px solid #E5E7EB;
-        }
-
-        /* Bottom Nav */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            max-width: 480px;
-            background: #FFFFFF;
-            border-top: 1px solid #E5E7EB;
-            display: flex;
-            justify-content: space-around;
-            padding: 0.75rem 0;
-            z-index: 1030;
-            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.02);
+            padding-bottom: 90px;
+            padding-top: 80px;
         }
 
         .nav-item {
-            text-decoration: none;
-            color: var(--text-muted);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-size: 0.75rem;
-            font-weight: 500;
-            transition: color 0.2s;
+            font-size: 0.85rem;
         }
 
         .nav-item i {
-            font-size: 1.25rem;
-            margin-bottom: 2px;
+            font-size: 1.4rem;
+        }
+    }
+
+    /* ===== ESCRITORIO (> 992px) ===== */
+    @media (min-width: 992px) {
+        .mobile-container {
+            /* Ocupa TODO el ancho, sin límite */
+            max-width: 100%;
+            padding-bottom: 100px;
+            padding-top: 90px;
         }
 
-        .text-orange {
-            color: var(--primary-orange) !important;
+        /* Las categorías se centran y hacen wrap */
+        .categorias-wrapper {
+            justify-content: center;
+            flex-wrap: wrap;
+            overflow: visible !important;
+            gap: 0.75rem !important;
         }
 
-        .bg-orange {
-            background-color: var(--primary-orange) !important;
+        .categorias-wrapper .btn {
+            padding-left: 1.5rem !important;
+            padding-right: 1.5rem !important;
+            font-size: 1rem;
         }
 
-        /* Ocultar barra de scroll en categorías */
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
+        .nav-item {
+            font-size: 0.95rem;
+            padding: 0.25rem 2rem;
         }
 
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+        .nav-item i {
+            font-size: 1.6rem;
+            margin-bottom: 4px;
         }
-    </style>
+
+        /* Tarjetas más grandes en escritorio */
+        .card-sushi {
+            border-radius: 1rem !important;
+        }
+
+        .card-sushi .card-body {
+            padding: 1rem !important;
+        }
+
+        .card-sushi h2 {
+            font-size: 1.1rem !important;
+        }
+
+        .card-sushi p {
+            font-size: 0.9rem !important;
+        }
+
+        .card-sushi .badge {
+            font-size: 0.95rem;
+            padding: 0.5em 0.75em;
+        }
+
+        /* Botón + más grande y accesible */
+        .add-to-cart-btn {
+            width: 44px !important;
+            height: 44px !important;
+            bottom: 12px !important;
+            right: 12px !important;
+        }
+
+        .add-to-cart-btn i {
+            font-size: 1.3rem;
+        }
+    }
+
+    /* ===== PANTALLAS MUY GRANDES (> 1400px) ===== */
+    @media (min-width: 1400px) {
+        .mobile-container {
+            padding-left: 3rem;
+            padding-right: 3rem;
+        }
+    }
+</style>
 </head>
 
 <body>
@@ -179,10 +305,9 @@
                             let cantidadActual = parseInt(numSpan.innerText) || 0;
                                 
                             numSpan.innerText = cantidadActual + 1;  
-                                // Lo hacemos visible (por si estaba en display: none)
                             badge.style.display = 'inline-block';
                             }
-                        // Restaurar el botón
+            
                         btn.innerHTML = '<i class="bi bi-check-lg"></i>';
                         setTimeout(() => btn.innerHTML = iconoOriginal, 1500);
 
@@ -218,6 +343,7 @@
                     });
                 });
             });
+            
 
         });
     </script>
