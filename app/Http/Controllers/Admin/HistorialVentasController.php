@@ -13,9 +13,9 @@ use App\Models\Sesion;
 
 class HistorialVentasController extends Controller
 {
-    // ================================================================
+   
     // INDEX — Panel principal
-    // ================================================================
+
     public function index(Request $request)
     {
         if ($request->get('export') === 'csv') {
@@ -25,7 +25,7 @@ class HistorialVentasController extends Controller
         $filtroTiempo = $request->get('tiempo', 'hoy');
         [$fechaDesde, $fechaHasta] = $this->calcularRango($request);
 
-        // ── Closure reutilizable para los filtros comunes ─────────────
+        //  Closure reutilizable para los filtros comunes 
         $applyFiltros = function ($q) use ($request) {
             return $q
                 ->when(
@@ -46,14 +46,14 @@ class HistorialVentasController extends Controller
                 );
         };
 
-        // ── Ventas paginadas ─────────────────────────────────────────
+        //  Ventas paginadas 
         $ventas = $applyFiltros(
             Venta::whereBetween('created_at', [$fechaDesde, $fechaHasta])
                 ->with(['sesion.mesa', 'caja', 'usuario'])
                 ->orderBy('created_at', 'desc')
         )->paginate(25)->withQueryString();
 
-        // ── Métricas en una sola query ───────────────────────────────
+        //  Métricas en una sola query 
         $raw = $applyFiltros(
             Venta::whereBetween('created_at', [$fechaDesde, $fechaHasta])
         )->selectRaw('
@@ -202,10 +202,8 @@ class HistorialVentasController extends Controller
             'lineas' => $lineas,
         ]);
     }
-
-    // ================================================================
     // ANULAR — PATCH /admin/ventas/{venta}/anular
-    // ================================================================
+    
     public function anular(Request $request, Venta $venta)
     {
         $request->validate(['motivo_anulacion' => 'required|string|max:500']);
@@ -219,9 +217,9 @@ class HistorialVentasController extends Controller
         return back()->with('success', "Ticket #{$venta->id} anulado correctamente.");
     }
 
-    // ================================================================
+
     // EXPORTAR CSV — también llamado desde index() con ?export=csv
-    // ================================================================
+  
     public function exportar(Request $request)
     {
         [$fechaDesde, $fechaHasta] = $this->calcularRango($request);
@@ -286,9 +284,7 @@ class HistorialVentasController extends Controller
         ]);
     }
 
-    // ================================================================
-    // PRIVADO — Rango de fechas
-    // ================================================================
+    // PRIVADO 
     private function calcularRango(Request $request): array
     {
         return match ($request->get('tiempo', 'hoy')) {
@@ -308,9 +304,8 @@ class HistorialVentasController extends Controller
         };
     }
 
-// ================================================================
-    // COBRAR — El motor del TPV
-    // ================================================================
+    // COBRAR 
+
     public function cobrar(Request $request, \App\Models\Mesa $mesa)
     {
         // 1. Validar la petición (Sin typos)

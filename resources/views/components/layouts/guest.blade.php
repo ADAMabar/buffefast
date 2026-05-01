@@ -97,20 +97,24 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script>
-    window.addEventListener('pageshow', function(event) {
-        const flag = "recarga_realizada_" + window.location.pathname;
-        
-        if (!sessionStorage.getItem(flag) || event.persisted) {
-            setTimeout(function() {
-                sessionStorage.setItem(flag, "true");
-                window.location.reload();
-            }, 1000);
-        } else {
-            sessionStorage.removeItem(flag);
-        }
-    });
-    </script>
+  <script>
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        // La página viene de bfcache, el token CSRF está expirado
+        // Hacemos fetch para obtener token nuevo SIN recargar la página
+        fetch('/refresh-csrf')
+            .then(r => r.json())
+            .then(data => {
+                // Actualizar el input _token del formulario
+                const tokenInput = document.querySelector('input[name="_token"]');
+                if (tokenInput) {
+                    tokenInput.value = data.token;
+                }
+            })
+            .catch(err => console.error('Error refrescando CSRF:', err));
+    }
+});
+</script>
 
 </body>
 

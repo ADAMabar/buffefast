@@ -1,4 +1,4 @@
-{{-- ── DESGLOSE DE MÉTODOS DE PAGO ───────────────────────────────────── --}}
+{{--  DESGLOSE DE MÉTODOS DE PAGO  --}}
 <div class="col-12">
     <div class="card border-0 shadow-sm rounded-4">
         <div class="card-body p-3">

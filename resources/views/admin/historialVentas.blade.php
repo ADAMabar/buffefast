@@ -30,6 +30,10 @@
     @include('components.componentsHistorial.tickets-table')
     @include('admin.modals.detalle-ticket')
     @include('admin.modals.anular-ticket')
+    
+    {{-- Chart.js CDN --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    
     @include('components.componentsHistorial.scripts')
 
 </x-layouts.admin>

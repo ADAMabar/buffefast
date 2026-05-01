@@ -168,16 +168,29 @@
     </form>
     <script>
         // Preview del Logo
-        const logoInput = document.getElementById('logoUrlInput');
-        if(logoInput) {
-            logoInput.addEventListener('input', function(e) {
-                const wrap = document.getElementById('logoWrap');
-                const img = document.getElementById('logoImg');
-                if(e.target.value) { img.src = e.target.value; wrap.style.setProperty('display', 'flex', 'important'); }
-                else { wrap.style.setProperty('display', 'none', 'important'); }
-            });
+        document.getElementById('logoInput').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const wrap = document.getElementById('logoWrap');
+        const img = document.getElementById('logoImg');
+        
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                img.src = event.target.result;
+                wrap.style.display = 'flex';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            // Si no hay archivo nuevo, mantener la imagen anterior o ocultar
+            const logoActual = document.querySelector('input[name="logo_actual"]');
+            if (logoActual && logoActual.value) {
+                img.src = logoActual.value;
+                wrap.style.display = 'flex';
+            } else {
+                wrap.style.display = 'none !important';
+            }
         }
-
+    });
         // Slider de Rondas
         const rondaSlider = document.getElementById('rondaSlider');
         const rondaBadge = document.getElementById('valRondaBadge');

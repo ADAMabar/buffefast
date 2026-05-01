@@ -98,4 +98,72 @@
         document.getElementById('formAnular').action = `/admin/ventas/${id}/anular`;
         setTimeout(() => new bootstrap.Modal(document.getElementById('modalAnular')).show(), 350);
     }
+
+    // CHART.JS - Gráfica de Ventas
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof window.chartData === 'undefined') return;
+        
+        const ctx = document.getElementById('ventasChart');
+        if (!ctx) return;
+        
+        const { labels, data, colors, esPorHora } = window.chartData;
+        
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Ventas (€)',
+                    data: data,
+                    backgroundColor: colors,
+                    borderRadius: 6,
+                    borderSkipped: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1F2937',
+                        titleFont: { size: 13 },
+                        bodyFont: { size: 13 },
+                        padding: 12,
+                        cornerRadius: 8,
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.y.toFixed(2) + '€';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0,0,0,0.05)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value.toFixed(0) + '€';
+                            },
+                            font: { size: 11 }
+                        }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: {
+                            font: { size: 11 }
+                        }
+                    }
+                },
+                animation: {
+                    duration: 800,
+                    easing: 'easeOutQuart'
+                }
+            }
+        });
+    });
 </script>

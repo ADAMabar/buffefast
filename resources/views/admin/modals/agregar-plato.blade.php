@@ -61,7 +61,7 @@
                         <div class="col-12">
                             <label class="form-label fw-bold small text-muted">FOTO DEL PLATO</label>
                             <input type="file" name="imagen" class="form-control bg-light border-0" accept="image/*">
-                            <div class="form-text small">Sube una imagen en formato JPG, PNG o WEBP (Máx: 2MB).</div>
+                            <div class="form-text small">Sube una imagen en formato JPG, PNG o WEBP.</div>
                         </div>
                     </div>
                 </div>

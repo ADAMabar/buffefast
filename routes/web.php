@@ -28,12 +28,11 @@ use App\Http\Controllers\Cocina\CocinaController;
 
 Route::get('/', [ClienteAuthController::class, 'create'])->name('cliente.inicio');
 
-// Si el usuario copia y pega la URL (GET), lo mandamos de vuelta al inicio
+
 Route::get('/acceder', function () {
     return redirect()->route('cliente.inicio')->with('error', 'Por favor, inicia sesión usando el formulario.');
 });
 
-// Tu ruta original que procesa el formulario (POST)
 Route::post('/acceder', [ClienteAuthController::class, 'store'])->name('cliente.acceder');
 Route::get('/logout-cliente', [ClienteAuthController::class, 'destroy'])->name('cliente.logout');
 
@@ -59,8 +58,11 @@ Route::get('/nosotros', [CuentaController::class, 'indexSobreNosotros'])->name('
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+    
+    Route::get('/refresh-csrf', function() {
+        return response()->json(['token' => csrf_token()]);
+    });
 });
-
 
 // ==========================================
 // PROTEGIDAS (Solo personal logueado)

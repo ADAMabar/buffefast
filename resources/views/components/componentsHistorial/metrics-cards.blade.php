@@ -1,4 +1,4 @@
-{{-- ── TARJETAS DE MÉTRICAS ─────────────────────────────────────────── --}}
+{{-- TARJETAS DE MÉTRICAS  --}}
 <div class="row g-3 mb-4">
 
     <div class="col-6 col-md-3 anim" style="animation-delay:.05s">

@@ -75,18 +75,25 @@
                                 </div>
                             </div>
                             
-                            <div class="row g-3 align-items-center">
-                                <div class="col-sm-8">
-                                    <label class="cfg-label">URL del logotipo (PNG/SVG)</label>
-                                    <input type="url" class="form-control" name="logo_url" id="logoUrlInput"
-                                        value="{{ $ajustes['logo_url'] ?? '' }}" placeholder="https://...">
-                                </div>
-                                <div class="col-sm-4 text-center">
-                                    <div id="logoWrap" class="p-2 rounded border bg-light d-flex align-items-center justify-content-center" style="height: 55px; {{ empty($ajustes['logo_url']) ? 'display:none !important;' : '' }}">
-                                        <img id="logoImg" src="{{ $ajustes['logo_url'] ?? '' }}" style="max-height: 40px; max-width: 100%; object-fit: contain;">
-                                    </div>
-                                </div>
+                       <div class="row g-3 align-items-center">
+                        <div class="col-sm-8">
+                            <label class="cfg-label">Logotipo (PNG/SVG)</label>
+                            <input type="file" class="form-control" name="logo" id="logoInput" 
+                                accept="image/png,image/svg+xml,image/jpeg">
+                            
+                            {{-- Campo oculto para mantener la imagen actual si no se sube una nueva --}}
+                            @if(!empty($ajustes['logo_url']))
+                                <input type="hidden" name="logo_actual" value="{{ $ajustes['logo_url'] }}">
+                            @endif
+                        </div>
+                        <div class="col-sm-4 text-center">
+                            <div id="logoWrap" class="p-2 rounded border bg-light d-flex align-items-center justify-content-center" 
+                                style="height: 55px; {{ empty($ajustes['logo_url']) ? 'display:none !important;' : '' }}">
+                                <img id="logoImg" src="{{ $ajustes['logo_url'] ?? '' }}" 
+                                    style="max-height: 40px; max-width: 100%; object-fit: contain;">
                             </div>
+                        </div>
+                    </div>
                         </div>
 
                         {{-- Tarjeta: Redes y WiFi --}}

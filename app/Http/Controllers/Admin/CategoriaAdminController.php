@@ -33,7 +33,7 @@ class CategoriaAdminController extends Controller
     public function destroy(Categorias $categoria)
     {
         try {
-            // Doble seguridad: Por si intentan saltarse el bloqueo del HTML
+            //  Por si intentan saltarse el bloqueo del HTML
             if ($categoria->platos()->count() > 0) {
                 return back()->with('error', 'No puedes eliminar una categoría que contiene platos.');
             }

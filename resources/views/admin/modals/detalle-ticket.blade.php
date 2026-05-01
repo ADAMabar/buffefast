@@ -1,4 +1,4 @@
-{{-- ── MODAL DETALLE TICKET ─────────────────────────────────────────── --}}
+{{--  MODAL DETALLE TICKET --}}
 <div class="modal fade" id="modalDetalle" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content rounded-4 border-0 shadow-lg">

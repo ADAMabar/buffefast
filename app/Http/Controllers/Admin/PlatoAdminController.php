@@ -9,6 +9,7 @@ use App\Models\Categorias;
 use App\Models\Plato;
 use App\Http\Requests\Admin\StorePlatoRequest;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class PlatoAdminController extends Controller
 {
@@ -86,6 +87,7 @@ class PlatoAdminController extends Controller
             return back()->with('error', 'No se pudo actualizar el estado del plato.');
         }
     }
+    
 
     
     public function reactivar(Plato $plato)
@@ -108,10 +110,10 @@ class PlatoAdminController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            // 1. Buscamos el plato en la base de datos
+
             $plato = Plato::findOrFail($id);
 
-            // 2. Validamos los datos (puedes usar un FormRequest si lo prefieres)
+        
             $request->validate([
                 'nombre' => 'required|string|max:255',
                 'categoria_id' => 'required|exists:categorias,id',
@@ -120,7 +122,7 @@ class PlatoAdminController extends Controller
                 'imagen' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             ]);
 
-            // 3. Preparamos los datos para actualizar
+            //  Preparamos los datos para actualizar
             $datosActualizar = [
                 'nombre' => $request->nombre,
                 'categoria_id' => $request->categoria_id,
@@ -128,7 +130,7 @@ class PlatoAdminController extends Controller
                 'precio' => $request->precio,
             ];
 
-            // 4. ¿Ha subido una foto nueva?
+            //  ¿Ha subido una foto nueva?
             if ($request->hasFile('imagen')) {
                 // Borramos la foto vieja del servidor para no acumular basura
                 if ($plato->imagen) {
@@ -139,7 +141,7 @@ class PlatoAdminController extends Controller
                 $datosActualizar['imagen'] = $request->file('imagen')->store('platos', 'public');
             }
 
-            // 5. Actualizamos el plato de golpe
+            // Actualizamos el plato de golpe
             $plato->update($datosActualizar);
 
             return back()->with('success', '¡Plato actualizado con éxito!');

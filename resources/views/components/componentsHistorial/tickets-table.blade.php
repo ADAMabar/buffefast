@@ -1,4 +1,4 @@
-{{-- ── TABLA DE TICKETS ─────────────────────────────────────────────── --}}
+{{--  TABLA DE TICKETS --}}
 <div class="card border-0 shadow-sm rounded-4 anim" style="animation-delay:.35s">
     <div class="card-header bg-white border-0 pt-4 pb-3 px-4 d-flex justify-content-between align-items-center">
         <h6 class="fw-bold mb-0">

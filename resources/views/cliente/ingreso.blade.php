@@ -4,7 +4,7 @@
         <div class="text-center mb-5">
             <div class="d-inline-flex align-items-center justify-content-center mb-4"
                 style="width: 72px; height: 72px; border-radius: 20px; background: rgba(255,122,0,0.1); border: 2px solid var(--primary-orange);">
-                <img scr="{{configuracion('logo_url')}}" alt="Logo>
+                <img src="{{ configuracion('logo_url') }}" alt="Logo" style="max-width: 80%; max-height: 80%;">
             </div>
             <h1 class="h3 fw-bold mb-2">Bienvenido a {{ configuracion('nombre_restaurante') }}</h1>
             <p class="text-muted">Ingresa el código de tu mesa para empezar a pedir.</p>

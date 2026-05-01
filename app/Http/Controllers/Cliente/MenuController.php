@@ -19,15 +19,14 @@ class MenuController extends Controller
 public function index(Request $request)
     {
         try {
-            // 1. EL GUARDIA DE SEGURIDAD
+        
             if (!session()->has('sesion_id')) {
                 return redirect()->route('cliente.inicio')->withErrors(['codigo' => 'Debes ingresar el código de mesa para acceder.']);
             }
 
             // Sacamos los datos de la sesión del móvil
             $sesion_id = session('sesion_id');
-            $cliente_id = session('cliente_id'); // <-- ¡Clave para saber de quién son los platos!
-
+            $cliente_id = session('cliente_id'); 
             // Buscamos la sesión y su mesa
             $sesion = Sesion::with('mesa')->find($sesion_id);
 
@@ -37,7 +36,7 @@ public function index(Request $request)
             }
 
             // 2. Traemos categorías y platos
-            $categorias = Categorias::orderBy('orden')->get(); // OJO: Tu modelo se suele llamar Categoria en singular
+            $categorias = Categorias::orderBy('orden')->get(); 
             $query = Plato::activos();
 
             if ($request->has('categoria')) {

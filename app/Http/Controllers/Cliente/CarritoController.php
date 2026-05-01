@@ -20,7 +20,7 @@ class CarritoController extends Controller
     public function index()
     {
         try{
-            // 1. EL GUARDIA DE SEGURIDAD
+
             $sesion_id = session('sesion_id');
             $sesionDB = Sesion::find($sesion_id);
 

@@ -1,23 +1,6 @@
 <?php
 
-// ============================================================
-// 1. RUTAS — añade en routes/web.php dentro del grupo auth
-// ============================================================
 
-// Route::middleware(['auth'])->group(function () {
-//
-//     Route::get( '/admin/historial',                  [HistorialController::class, 'index'])  ->name('admin.historial');
-//     Route::get( '/admin/ventas/{venta}',             [HistorialController::class, 'show'])   ->name('admin.ventas.show');
-//     Route::patch('/admin/ventas/{venta}/anular',     [HistorialController::class, 'anular']) ->name('admin.ventas.anular');
-//
-// });
-//
-// No necesitas ruta separada para exportar: se llama desde index() con ?export=csv
-
-
-// ============================================================
-// 2. CAMPOS QUE NECESITA TU MODELO Venta (app/Models/Venta.php)
-// ============================================================
 
 namespace App\Models;
 

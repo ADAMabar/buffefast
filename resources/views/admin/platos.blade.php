@@ -8,9 +8,6 @@
         </div>
 
         <div class="d-flex flex-wrap gap-2 align-items-center">
-            <span class="badge rounded-pill bg-white text-success border px-3 py-2">
-                <i class="bi bi-circle-fill me-1" style="font-size: 0.6rem;"></i> Disponibles
-            </span>
             <span class="badge rounded-pill bg-white border px-3 py-2 p-0">
                 <button type="button"
                     class="btn btn-link text-decoration-none text-danger p-0 m-0 d-inline-flex align-items-center gap-1"
@@ -107,7 +104,6 @@
                                                border-radius: 0.875rem;
                                                border-top: 4px solid {{ $plato->activo ? '#10B981' : '#EF4444' }};">
 
-                                        {{-- Clickable area → offcanvas detail --}}
                                         <div class="card-body pb-0 flex-grow-1"
                                             role="button"
                                             tabindex="0"
@@ -157,7 +153,7 @@
                                             </div>
                                         </div>
 
-                                        {{-- Card footer: toggle + actions --}}
+                                        {{-- toggle + actions --}}
                                         <div class="card-body pt-3">
 
                                             {{-- Visibility toggle (AJAX) --}}
@@ -181,7 +177,7 @@
                                                 </form>
                                             </div>
 
-                                            {{-- Edit + Delete --}}
+                                     
                                             <div class="d-flex gap-2">
                                                 <button class="btn flex-fill fw-bold rounded-3 py-2"
                                                     data-bs-toggle="modal"
@@ -204,7 +200,6 @@
                                         </div>
                                     </div>
 
-                                    {{-- ── Offcanvas detail panel ── --}}
                                     <div class="offcanvas offcanvas-end"
                                         tabindex="-1"
                                         id="offcanvasPlato{{ $plato->id }}"
@@ -328,54 +323,110 @@
             });
         }
 
-        /* ── Toggle invisible (Sin recargar la página) ── */
+        /*  Toggle invisible */
         async function toggleSilencioso(checkbox, idPlato) {
             const form = checkbox.closest('form');
-            const tarjeta = document.getElementById('tarjeta-plato-' + idPlato);
             const label = form.querySelector('.form-check-label');
+            const tarjeta = document.getElementById('tarjeta-plato-' + idPlato);
 
-            // 1. Bloqueamos el switch un milisegundo para que no hagan doble clic
+            const estadoOriginal = !checkbox.checked;
             checkbox.disabled = true;
 
             try {
-                // 2. Enviamos la orden a Laravel en secreto (AJAX)
-                await fetch(form.action, {
+                const formData = new FormData(form);
+                formData.set('activo', checkbox.checked ? '1' : '0');
+
+                const response = await fetch(form.action, {
                     method: 'POST',
-                    body: new FormData(form),
+                    body: formData,
                     headers: { 'X-Requested-With': 'XMLHttpRequest' }
                 });
 
-                // 3. MAGIA VISUAL: Actualizamos la tarjeta al instante
+                if (!response.ok) throw new Error(`Error: ${response.status}`);
+
                 const estaActivo = checkbox.checked;
 
-                // Cambiar el texto y color del label
+                //1. Actualizar label y colores de la tarjeta 
                 label.textContent = estaActivo ? 'Visible' : 'Oculto';
                 label.className = `form-check-label small fw-bold ${estaActivo ? 'text-success' : 'text-danger'}`;
 
                 if (tarjeta) {
-                    // Cambiar la chapita (badge) superior
                     const badge = tarjeta.querySelector('.d-flex .badge');
                     if (badge) {
                         badge.textContent = estaActivo ? 'Disponible' : 'Oculto';
                         badge.style.backgroundColor = estaActivo ? '#10B981' : '#EF4444';
                     }
-
-                    // Cambiar la línea de color de arriba de la tarjeta
                     const innerCard = tarjeta.querySelector('.card');
                     if (innerCard) {
                         innerCard.style.borderTopColor = estaActivo ? '#10B981' : '#EF4444';
                     }
                 }
 
-                // Desbloqueamos el switch
-                checkbox.disabled = false;
+                //  Gestionar la fila en el modal
+                const filaExistente = document.getElementById('fila-plato-oculto-' + idPlato);
+
+                if (!estaActivo) {
+                    // OCULTANDO → crear fila en el modal si no existe ya
+                    if (!filaExistente) {
+                        // Sacar nombre e imagen de la tarjeta
+                        const nombreEl = tarjeta?.querySelector('h5, h6, .fw-bold');
+                        const nombre = nombreEl ? nombreEl.textContent.trim() : 'Plato';
+                        const imgEl = tarjeta?.querySelector('img');
+                        const imgHTML = imgEl
+                            ? `<img src="${imgEl.src}" class="rounded-3" style="width:50px;height:50px;object-fit:cover;">`
+                            : `<div class="rounded-3 bg-light d-flex justify-content-center align-items-center border" style="width:50px;height:50px;"><i class="bi bi-image text-muted"></i></div>`;
+
+                        const fila = document.createElement('div');
+                        fila.className = 'list-group-item d-flex justify-content-between align-items-center p-3 border-bottom';
+                        fila.id = 'fila-plato-oculto-' + idPlato;
+                        fila.innerHTML = `
+                            <div class="d-flex align-items-center gap-3">
+                                ${imgHTML}
+                                <div>
+                                    <h6 class="mb-0 fw-bold text-dark">${nombre}</h6>
+                                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 mt-1">Agotado / Oculto</span>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-success fw-bold px-3 rounded-pill shadow-sm"
+                                onclick="reactivarPlatoSilencioso(${idPlato}, this)">
+                                <i class="bi bi-power me-1"></i> Reactivar
+                            </button>
+                        `;
+
+                        /
+                        let listGroup = document.querySelector('#modalPlatosOcultos .list-group');
+                        if (!listGroup) {
+                            listGroup = document.createElement('div');
+                            listGroup.className = 'list-group list-group-flush mb-2';
+                            document.querySelector('#modalPlatosOcultos .modal-body').prepend(listGroup);
+                        }
+                        listGroup.appendChild(fila);
+
+                        // Ocultar el mensaje "Todo al día" si estaba visible
+                        const msgVacio = document.querySelector('#modalPlatosOcultos .text-center.py-5');
+                        if (msgVacio) msgVacio.style.display = 'none';
+                    }
+
+                } else {
+                    // REACTIVANDO → quitar la fila del modal
+                    if (filaExistente) filaExistente.remove();
+
+                    // Si ya no quedan filas, mostrar mensaje "Todo al día"
+                    const filasRestantes = document.querySelectorAll('#modalPlatosOcultos .list-group-item');
+                    if (filasRestantes.length === 0) {
+                        const msgVacio = document.querySelector('#modalPlatosOcultos .text-center.py-5');
+                        if (msgVacio) msgVacio.style.display = '';
+                    }
+                }
 
             } catch (error) {
                 console.error('Error:', error);
-                // Si falla, devolvemos el switch a su estado original
-                checkbox.checked = !checkbox.checked;
+                checkbox.checked = estadoOriginal;
+                label.textContent = estadoOriginal ? 'Visible' : 'Oculto';
+                label.className = `form-check-label small fw-bold ${estadoOriginal ? 'text-success' : 'text-danger'}`;
+                alert('No se pudo cambiar la visibilidad. Inténtalo de nuevo.');
+            } finally {
                 checkbox.disabled = false;
-                alert('Hubo un problema de conexión. Inténtalo de nuevo.');
             }
         }
 

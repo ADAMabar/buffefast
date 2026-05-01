@@ -35,10 +35,8 @@ class ClienteAdminController extends Controller
                 ->where('sesion_id', $sesionActiva->id)
                 ->orderBy('ronda', 'desc')
                 ->get();
-
-            // 3. AGRUPAMOS Y MAPEAMOS (Eliminé el duplicado que tenías)
+                
             $pedidosAgrupados = $pedidos->groupBy(function ($pedido) {
-                // EXORCISMO 1: Usamos ?-> para evitar que explote si el cliente es null
                 return $pedido->cliente?->nombre ?? 'Anónimo';
             })->map(function ($pedidosDelCliente) {
 

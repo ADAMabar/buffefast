@@ -8,9 +8,7 @@ new class extends Component
 };
 ?>
 <div>
-    {{-- ==========================================
-         SECCIÓN 1: EMPLEADOS
-         ========================================== --}}
+    {{-- SECCIÓN 1: EMPLEADOS--}}
     <div class="row g-3 mb-4">
         
         <div class="col-12 col-xl-5">
@@ -128,9 +126,7 @@ new class extends Component
     {{-- Separador Visual --}}
     <hr class="my-5 text-muted opacity-25">
 
-    {{-- ==========================================
-         SECCIÓN 2: CAJAS Y COBRO
-         ========================================== --}}
+    {{-- SECCIÓN 2: CAJAS Y COBRO --}}
     <div class="row g-3">
         
         <div class="col-12 col-xl-5">

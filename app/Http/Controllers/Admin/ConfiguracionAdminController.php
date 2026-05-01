@@ -71,10 +71,13 @@ class ConfiguracionAdminController extends Controller
             Configuracion::where('clave', $clave)->update(['valor' => $valor]);
         }
 
-        // Limpiamos la caché (Esto es vital para el Paso 3 del Helper)
         cache()->forget('ajustes_globales');
 
         return redirect()->back()->with('success', 'Configuración guardada correctamente.');
+    }
+
+    public function subirImagen(Request $request){
+        
     }
 
 

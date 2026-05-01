@@ -1,9 +1,7 @@
-{{-- ── FILTROS ───────────────────────────────────────────────────────── --}}
 <div class="card border-0 shadow-sm rounded-4 mb-4">
     <div class="card-body p-3 p-md-4">
         <form action="{{ route('admin.historial') }}" method="GET" id="formFiltros">
 
-            {{-- Pills de período --}}
             <div class="d-flex flex-wrap gap-2 mb-3">
                 @foreach(['hoy'=>'Hoy','semana'=>'Esta semana','mes'=>'Este mes',
                           'anio'=>'Este año','mes_especifico'=>'Mes…',
