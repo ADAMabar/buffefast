@@ -110,7 +110,7 @@ class ClienteAdminController extends Controller
                 ]);
             });
 
-            return redirect()->route('admin.mesas')->with('success', "Mesa {$mesa->numero} cobrada y desocupada.");
+            return redirect()->route('admin.mesas')->with('success', "Mesa {$mesa->numero} desocupada correctamente.");
 
         } catch (\Exception $e) {
             Log::error("Error al desocupar la mesa {$mesa->id}: " . $e->getMessage());
@@ -151,4 +151,95 @@ class ClienteAdminController extends Controller
     return view('admin.listaPlatosOcultos', compact('sesionActiva', 'nombresPidiendoCuenta', '$mesa'));
 
     }
+
+
+/**
+ * Muestra ticket imprimible en HTML
+ */
+public function ticket(Mesa $mesa)
+{
+    try {
+        // Obtener sesión activa
+        $sesionActiva = $mesa->sesiones()
+            ->whereIn('estado', ['activa', 'solicitando_cuenta'])
+            ->latest()
+            ->first();
+
+        if (!$sesionActiva) {
+            return redirect()->route('admin.mesas')->with('error', "La Mesa {$mesa->numero} está libre.");
+        }
+
+        // Recuperar pedidos
+        $pedidos = \App\Models\Pedido::with('platos', 'cliente')
+            ->where('sesion_id', $sesionActiva->id)
+            ->orderBy('ronda', 'desc')
+            ->get();
+
+        $pedidosAgrupados = $pedidos->groupBy(function ($pedido) {
+            return $pedido->cliente?->nombre ?? 'Anónimo';
+        })->map(function ($pedidosDelCliente) {
+            $totalPersona = $pedidosDelCliente->sum(function ($pedido) {
+                return $pedido->platos->sum(function ($plato) {
+                    $cantidad = $plato->pivot->cantidad ?? 1;
+                    return $plato->precio * $cantidad;
+                });
+            });
+
+            // Obtener detalle de platos por cliente
+            $detallePlatos = [];
+            foreach ($pedidosDelCliente as $pedido) {
+                foreach ($pedido->platos as $plato) {
+                    $cantidad = $plato->pivot->cantidad ?? 1;
+                    $nombre = $plato->nombre;
+                    if (isset($detallePlatos[$nombre])) {
+                        $detallePlatos[$nombre]['cantidad'] += $cantidad;
+                        $detallePlatos[$nombre]['subtotal'] += $plato->precio * $cantidad;
+                    } else {
+                        $detallePlatos[$nombre] = [
+                            'cantidad' => $cantidad,
+                            'subtotal' => $plato->precio * $cantidad,
+                            'precio_unitario' => $plato->precio
+                        ];
+                    }
+                }
+            }
+
+            return [
+                'historial_pedidos' => $pedidosDelCliente,
+                'total_euros' => $totalPersona,
+                'cantidad_rondas' => $pedidosDelCliente->count(),
+                'detalle_platos' => $detallePlatos
+            ];
+        });
+
+        // Calcular totales
+        $porcentajeIva = configuracion('porcentaje_impuestos', 10);
+        $precioBase = configuracion('precio_buffet_adulto', 15.90);
+        
+        $totalMenu = $pedidosAgrupados->sum(function($datos) {
+            return $datos['total_euros'];
+        });
+        
+        $totalMesa = $totalMenu + $precioBase;
+        $ivaCalculado = $totalMesa * ($porcentajeIva / 100);
+        $totalConIva = $totalMesa + $ivaCalculado;
+
+        return view('admin.ticket-print', [
+            'mesa' => $mesa,
+            'sesionActiva' => $sesionActiva,
+            'pedidosAgrupados' => $pedidosAgrupados,
+            'totalMesa' => $totalMesa,
+            'totalConIva' => $totalConIva,
+            'iva' => $porcentajeIva,
+            'ivaCalculado' => $ivaCalculado,
+            'precioBase' => $precioBase,
+            'totalMenu' => $totalMenu,
+            'fecha' => now()->format('d/m/Y H:i')
+        ]);
+
+    } catch (\Throwable $e) {
+        Log::error("Error al generar ticket mesa {$mesa->id}: " . $e->getMessage());
+        return back()->with('error', 'Error al generar el ticket.');
+    }
+}
 }

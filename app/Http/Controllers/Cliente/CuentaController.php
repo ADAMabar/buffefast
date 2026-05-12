@@ -22,21 +22,24 @@ class CuentaController extends Controller
                 return redirect()->route('cliente.inicio')->with('error', 'Tu sesión ha caducado.');
             }
 
-            // Traemos la sesión y su mesa en UNA SOLA consulta (Eager Loading)
+            // Traemos la sesión y su mesa en UNA SOLA consulta 
             $sesion = Sesion::with('mesa')->find($sesion_id);
 
-            //  EL GUARDIA: Si no existe en BD o el admin la cerró, lo expulsamos
+            //   Si no existe en BD o el admin la cerró, lo expulsamos
             if (!$sesion || $sesion->estado === 'cerrada') {
                 session()->forget(['sesion_id', 'cliente_id', 'carrito', 'carrito_count']);
                 return redirect()->route('cliente.inicio')->with('error', 'Tu mesa ha sido cerrada y cobrada. ¡Gracias por tu visita!');
             }
 
-            //  Traemos el historial de pedidos de esta sesión
+           $cliente_id = session('cliente_id');
+ 
+            // Traemos el historial de pedidos de ESTE cliente en esta sesión
             $pedidos = Pedido::with('platos')
                 ->where('sesion_id', $sesion_id)
+                ->where('cliente_id', $cliente_id)  
                 ->orderBy('ronda', 'desc')
                 ->get();
-            // Simplemente contamos cuántos elementos tiene la colección que ya trajimos.
+            
             $rondaActual = $pedidos->count() + 1;
 
             return view('cliente.cuenta', compact('sesion', 'pedidos', 'rondaActual'));
@@ -53,12 +56,15 @@ class CuentaController extends Controller
         //verifico otra vez si la sesion está activa
         $sesion_id = session('sesion_id');
         
-         $pedidos = Pedido::with('platos')
-                ->where('sesion_id', $sesion_id)
-                ->orderBy('ronda', 'desc')
-                ->get();
-                
-        $rondaActual = $pedidos->count() + 1;
+         $cliente_id = session('cliente_id');
+ 
+    $pedidos = Pedido::with('platos')
+        ->where('sesion_id', $sesion_id)
+        ->where('cliente_id', $cliente_id)  
+        ->orderBy('ronda', 'desc')
+        ->get();
+        
+    $rondaActual = $pedidos->count() + 1;
 
         $sesion = Sesion::with('mesa')->find($sesion_id);
 

@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StorePlatoRequest extends FormRequest
 {
+    protected $errorBag = 'platoBag';
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -22,7 +23,7 @@ class StorePlatoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nombre' => ['required', 'string', 'min:3', 'max:100'],
+            'nombre' => ['required', 'string', 'min:3', 'max:100', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
             'descripcion' => ['required', 'string', 'min:10', 'max:500'],
             'precio' => ['required', 'numeric', 'max:999.99'],
             'categoria_id' => ['required', 'exists:categorias,id'],
@@ -33,6 +34,7 @@ class StorePlatoRequest extends FormRequest
     public function messages(): array
     {
         return [
+             'nombre.regex' => 'El nombre solo puede contener letras y espacios.',
             'nombre.required' => 'El nombre es obligatorio.',
             'nombre.min' => 'El nombre debe tener al menos 3 caracteres.',
             'descripcion.required' => 'La descripción es obligatoria.',

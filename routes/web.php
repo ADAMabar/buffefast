@@ -88,7 +88,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/mesa/lista-mesas-libres', [ClienteAdminController::class, 'listaMesasLibres'])->name('admin.mesa.lista-mesas-libres');
         Route::get('/admin/mesa/{mesa}/tpv', [ClienteAdminController::class, 'show'])->name('admin.mesa.show');
         Route::post('/admin/mesa/{mesa}/desocupar', [ClienteAdminController::class, 'desocupar'])->name('admin.mesa.desocupar');
-
+        Route::get('/admin/mesa/{mesa}/ticket', [ClienteAdminController::class, 'ticket'])->name('admin.mesa.ticket');
+        
         // --- Módulo: CATEGORÍAS Y PLATOS ---
         Route::get('/admin/platos', [PlatoAdminController::class, 'index'])->name('admin.platos.index');
         Route::post('/admin/plato/{plato}/toggle', [PlatoAdminController::class, 'toggleActivo'])->name('admin.plato.toggle');
@@ -98,6 +99,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/admin/carta/plato/{plato}/eliminar', [PlatoAdminController::class, 'destroy']);
         Route::patch('/admin/carta/plato/{plato}/reactivar', [PlatoAdminController::class, 'reactivar'])->name('admin.plato.reactivar');
         Route::put('/admin/carta/plato/{id}/actualizar', [PlatoAdminController::class, 'update'])->name('admin.plato.update');
+        
         // --- Rutas de Historial de Ventas ---
         Route::get('/historial', [HistorialVentasController::class, 'index'])->name('admin.historial');
         Route::post('/admin/mesa/{mesa}/cobrar', [HistorialVentasController::class, 'cobrar'])->name('admin.mesa.cobrar');

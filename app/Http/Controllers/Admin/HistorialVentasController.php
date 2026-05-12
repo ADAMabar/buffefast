@@ -306,7 +306,7 @@ class HistorialVentasController extends Controller
 
     // COBRAR 
 
-    public function cobrar(Request $request, \App\Models\Mesa $mesa)
+    public function cobrar(Request $request, Mesa $mesa)
     {
         // 1. Validar la petición (Sin typos)
         $request->validate([
@@ -372,7 +372,7 @@ class HistorialVentasController extends Controller
             DB::commit();
 
             return redirect()->route('admin.mesas')
-                ->with('success', '¡Caja sonando! 💸 Mesa cobrada correctamente.');
+                ->with('success', 'Mesa cobrada correctamente.');
 
         } catch (\Exception $e) {
             // 11. Si algo explota (Catch)

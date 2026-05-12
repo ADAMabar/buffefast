@@ -144,7 +144,7 @@
 
 
    
-    <form action="{{ route('admin.configuracion.ajustes') }}" method="POST" id="cfgForm" novalidate>
+  <form action="{{ route('admin.configuracion.ajustes') }}" method="POST" id="cfgForm" enctype="multipart/form-data" novalidate>
         @csrf
 
 

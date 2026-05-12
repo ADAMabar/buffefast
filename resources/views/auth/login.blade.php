@@ -1,12 +1,12 @@
 <x-layouts.guest>
-    <div class="clean-card w-100" style="max-width: 420px;">
+    <div class="clean-card w-100" style="max-width: 420px;" >
         <div class="text-center mb-4">
             <div class="d-inline-flex align-items-center justify-content-center mb-3"
-                style="width: 48px; height: 48px; border-radius: 14px; background: rgba(255,122,0,0.1); border: 1px solid var(--primary-orange);">
-                <span style="color: var(--primary-orange); font-size: 1.5rem; font-weight: 600;">B</span>
+                style="width: 100px; height: 100px; border-radius: 14px; background: rgba(255,122,0,0.1); border: 1px solid var(--primary-orange);">
+                <img src="{{ asset('storage/logos/LogoBuffeFast.png') }}" alt="Logo" style="width: 350px; height: 170px;">
             </div>
             <h2 class="h4 fw-semibold mb-1 text-dark">BuffeFast System</h2>
-            <p class="small" style="color: var(--text-muted);">Acceso exclusivo para Staff</p>
+            <p class="small" style="color: var(--text-muted);">Acceso exclusivo para Staff de <span class="fw-bold" style="color: var(--primary-orange);"> {{ configuracion('nombre_restaurante') }}</span></p>
         </div>
 
         <form action="{{ route('login.post') }}" method="POST">

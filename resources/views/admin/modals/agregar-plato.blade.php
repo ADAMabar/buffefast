@@ -11,17 +11,16 @@
                 @csrf
                 <div class="modal-body p-4">
 
-                    @if ($errors->any())
-                        <div class="alert alert-danger shadow-sm rounded-3 mb-4">
-                            <h6 class="fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Por favor, corrige estos
-                                errores:</h6>
-                            <ul class="mb-0">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
+                @if ($errors->hasBag('platoBag'))
+                <div class="alert alert-danger shadow-sm rounded-3 mb-4">
+                <h6 class="fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Por favor, corrige estos errores:</h6>
+                <ul class="mb-0">
+                    @foreach ($errors->platoBag->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                </div>
+                @endif
 
                     <div class="row g-3">
                         <div class="col-md-6">
@@ -77,10 +76,10 @@
     </div>
 </div>
 
-@if ($errors->any())
+
+@if ($errors->hasBag('platoBag'))
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Busca el modal por su ID ('modalPlato') y dile a Bootstrap que lo abra
             var miModalError = new bootstrap.Modal(document.getElementById('modalPlato'));
             miModalError.show();
         });

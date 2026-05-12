@@ -16,13 +16,10 @@
     <style>
         :root {
             --bg-light: #F8F9FA;
-            /* Fondo gris súper claro para resaltar la tarjeta blanca */
             --primary-orange: #FF7A00;
-            /* Naranja vibrante moderno */
             --primary-orange-hover: #E06B00;
             --card-bg: #FFFFFF;
             --text-main: #1F2937;
-            /* Gris oscuro para el texto, menos agresivo que el negro puro */
             --text-muted: #6B7280;
             --border-light: #E5E7EB;
         }
@@ -38,17 +35,15 @@
             background-image: radial-gradient(circle at 50% 0%, rgba(255, 122, 0, 0.05) 0%, transparent 50%);
         }
 
-        /* Tarjeta Blanca Minimalista 2026 con Borde Naranja Suave */
         .clean-card {
             background: var(--card-bg);
             border: 1px solid var(--primary-orange);
-            /* Borde naranja solicitado */
             padding: 2.5rem;
             box-shadow: 0 20px 40px -15px rgba(255, 122, 0, 0.15);
-            /* Sombra suave teñida de naranja */
+
         }
 
-        /* Inputs minimalistas claros */
+        
         .form-control-2026 {
             background: #FFFFFF;
             border: 1px solid var(--border-light);
@@ -62,7 +57,6 @@
             background: #FFFFFF;
             border-color: var(--primary-orange);
             box-shadow: 0 0 0 4px rgba(255, 122, 0, 0.15);
-            /* Anillo de enfoque naranja */
             color: var(--text-main);
         }
 

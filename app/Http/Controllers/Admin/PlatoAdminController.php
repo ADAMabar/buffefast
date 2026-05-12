@@ -69,11 +69,7 @@ class PlatoAdminController extends Controller
         }
     }
 
-    // --- ACCIONES PERSONALIZADAS ---
 
-    /**
-     * Activa o desactiva la visibilidad de un plato en la app.
-     */
     public function toggleActivo(Plato $plato)
     {
         try {
@@ -81,9 +77,23 @@ class PlatoAdminController extends Controller
             $plato->save();
 
             $mensaje = $plato->activo ? 'Plato activado y visible en la app.' : 'Plato ocultado de la app.';
+            
+            if (request()->wantsJson() || request()->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'activo' => $plato->activo,
+                    'message' => $mensaje
+                ]);
+            }
+
             return back()->with('success', $mensaje);
         } catch (\Exception $e) {
             Log::error("Error alternando visibilidad del plato {$plato->id}: " . $e->getMessage());
+            
+            if (request()->wantsJson() || request()->ajax()) {
+                return response()->json(['success' => false, 'message' => 'No se pudo actualizar el estado del plato.'], 500);
+            }
+            
             return back()->with('error', 'No se pudo actualizar el estado del plato.');
         }
     }

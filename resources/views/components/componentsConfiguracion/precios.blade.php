@@ -92,9 +92,9 @@
 
                                     <div style="border-top: 1px dashed #D1D5DB; margin: 10px 0;"></div>
                                     
-                                    {{-- Ticket Simplificado --}}
+                                
                                     <div class="d-flex justify-content-between mb-1" style="font-size: 0.85rem;">
-                                        <span>2x Menú Buffet</span>
+                                        <span>2x Salmon a la plancha</span>
                                         <span><span id="tpBase">{{ number_format((float)configuracion('precio_buffet_adulto', 15.90) * 2, 2, ',', '.') }}</span>€</span>
                                     </div>
 

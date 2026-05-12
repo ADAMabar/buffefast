@@ -53,7 +53,7 @@ class CarritoController extends Controller
             }
             
 
-            $rondaActual = Pedido::where('sesion_id', $sesion_id)->count() + 1;
+           $rondaActual = Pedido::where('sesion_id', $sesion_id)->where('cliente_id', $cliente_id)->count() + 1;
             $max_rondas_por_persona = Configuracion('rondas_maximas_sesion');
             if($rondaActual >= $max_rondas_por_persona){
             return back()->with('error', 'Ya has pasado el limite de de rodas por persona, porfavor habla con el camarero');

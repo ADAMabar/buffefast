@@ -13,12 +13,11 @@
         </div>
 
         <div class="d-flex gap-2">
-            <form action="{{ route('admin.mesa.desocupar', $mesa->id) }}" method="POST">
-                @csrf
-                <button class="btn btn-primary fw-bold shadow-sm rounded-pill px-4 py-2">
-                    <i class="bi bi-printer me-1"></i> Ticket
-                </button>
-            </form>
+            <a href="{{ route('admin.mesa.ticket', $mesa->id) }}" 
+               target="_blank"
+               class="btn btn-primary fw-bold shadow-sm rounded-pill px-4 py-2">
+                <i class="bi bi-printer me-1"></i> Ticket
+            </a>
 
             <button type="button" class="btn btn-success fw-bold px-4 fs-5" data-bs-toggle="modal"
                 data-bs-target="#modalCobrar">

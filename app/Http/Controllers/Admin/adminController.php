@@ -47,23 +47,35 @@ class adminController extends Controller
             return back()->with('error', 'Ocurrió un error al cargar las mesas.');
         }
     }
+  
+ public function store(StoreMesaRequest $request)
+{
+    try {
+        $reglas = [
+            'numero' => 'required|integer|unique:mesas,numero',
+            'capacidad' => 'required|integer|min:1',
+        ];
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreMesaRequest $request)
-    {
-        try {
-            // Usamos validated() en lugar de all() por seguridad
-            Mesa::create($request->validated());
+        $mensajes = [
+            'numero.required' => 'El número de la mesa es obligatorio.',
+            'numero.integer'  => 'El número de la mesa debe ser un valor entero.',
+            'numero.unique'   => 'Este número de mesa ya está registrado. Por favor, elige otro.',
+            'capacidad.required' => 'La capacidad de la mesa es obligatoria.',
+            'capacidad.integer'  => 'La capacidad debe ser un número entero.',
+            'capacidad.min'      => 'La capacidad debe ser para al menos 1 persona.',
+        ];
 
-            return back()->with('success', 'Mesa creada correctamente.');
+        $validate = request()->validate($reglas, $mensajes);
+        
+        Mesa::create($validate);
 
-        } catch (\Exception $e) {
-            Log::error('Error al crear mesa: ' . $e->getMessage());
-            return back()->with('error', 'Hubo un problema al crear la mesa.');
-        }
+        return back()->with('success', 'Mesa creada correctamente.');
+
+    } catch (\Exception $e) {
+        Log::error('Error al crear mesa: ' . $e->getMessage());
+        return back()->with('error', 'Hubo un problema al crear la mesa.');
     }
+}
 
   
 
@@ -79,10 +91,7 @@ public function destroy(Mesa $mesa)
             return back()->with('error', "¡No puedes borrar la Mesa {$mesa->numero} porque está ocupada!");
         }
 
-        // Desvincular sesiones (historial) en lugar de borrarlas
         $mesa->sesiones()->update(['mesa_id' => null]);
-        
-        // Borrar solo la mesa
         $mesa->delete();
 
         return back()->with('success', "Mesa {$mesa->numero} eliminada. El historial de pedidos se ha conservado.");
@@ -93,11 +102,7 @@ public function destroy(Mesa $mesa)
     }
 }
 
-    // --- MÉTODOS PERSONALIZADOS (ACCIONES) ---
-
-    /**
-     * Activa una mesa generando una nueva sesión.
-     */
+   
     public function activar(Request $request, Mesa $mesa)
     {
         try {

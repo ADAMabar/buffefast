@@ -45,7 +45,7 @@
         </div>
     </div>
 
-    {{-- ── Empty state ── --}}
+   
     @if($categorias->isEmpty())
         <div class="text-center py-5 bg-light rounded-4 border border-dashed mt-4">
             <i class="bi bi-egg-fried fs-1 text-muted mb-3 d-block"></i>
@@ -55,12 +55,11 @@
 
     @else
         @foreach($categorias as $categoria)
-
-            {{-- ── Category block ── --}}
+        @if($categoria->platos->isNotEmpty())
             <section class="mb-4 bg-white p-3 p-md-4 rounded-4 shadow-sm categoria-bloque"
                 aria-label="Categoría {{ $categoria->nombre }}">
 
-                {{-- Category header / collapse toggle --}}
+             
                 <div class="d-flex justify-content-between align-items-center border-bottom pb-3"
                     role="button"
                     tabindex="0"
@@ -248,7 +247,7 @@
                 </div>
 
             </section>
-
+            @endif
         @endforeach
     @endif
 
@@ -339,7 +338,10 @@
                 const response = await fetch(form.action, {
                     method: 'POST',
                     body: formData,
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    headers: { 
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
                 });
 
                 if (!response.ok) throw new Error(`Error: ${response.status}`);
@@ -393,7 +395,6 @@
                             </button>
                         `;
 
-                        /
                         let listGroup = document.querySelector('#modalPlatosOcultos .list-group');
                         if (!listGroup) {
                             listGroup = document.createElement('div');

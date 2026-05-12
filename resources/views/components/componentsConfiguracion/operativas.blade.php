@@ -31,12 +31,13 @@
 
                             <div class="row g-3">
                                 <div class="col-sm-6">
-                                    <label class="cfg-label">Límite de platos (persona/ronda) *</label>
+                                    <label class="cfg-label">Límite de platos (persona/ronda)</label>
                                     <div class="input-group">
                                         <input type="number" class="form-control" name="limite_platos_ronda" 
                                             value="{{ configuracion('limite_platos_ronda', '4') }}" min="1" max="50" required>
                                         <span class="input-group-text bg-light text-muted">platos</span>
                                     </div>
+                                    <p class="cfg-hint">0 = Ilimitadas.</p>
                                 </div>
                                 <div class="col-sm-6">
                                     <label class="cfg-label">Rondas máximas (por sesión)</label>
@@ -45,7 +46,6 @@
                                             value="{{ configuracion('rondas_maximas_sesion', '0') }}" min="0" max="20">
                                         <span class="input-group-text bg-light text-muted">rondas</span>
                                     </div>
-                                    <p class="cfg-hint">0 = Ilimitadas.</p>
                                 </div>
                             </div>
                         </div>

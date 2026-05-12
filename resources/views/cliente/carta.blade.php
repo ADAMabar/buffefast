@@ -3,7 +3,6 @@
     <x-header-carta :sesion="$sesion" :rondaActual="$rondaActual" />
 
     <div class="p-3 px-sm-4 px-lg-5">
-        <!-- Categorías: scroll en móvil, wrap en desktop -->
         <div class="d-flex overflow-auto hide-scrollbar gap-2 mb-4 pb-1 categorias-wrapper">
             <a href="{{ route('cliente.carta') }}"
                 class="btn {{ !request('categoria') ? 'bg-orange text-black' : 'btn-light text-dark border' }} rounded-pill px-4 fw-medium flex-shrink-0">
@@ -11,17 +10,25 @@
             </a>
 
             @foreach($categorias as $categoria)
+            @if($categoria->platos->isNotEmpty())
                 <a href="{{ route('cliente.carta', ['categoria' => $categoria->id]) }}"
                     class="btn {{ request('categoria') == $categoria->id ? 'bg-orange text-black' : 'btn-light text-dark border' }} rounded-pill px-4 fw-medium flex-shrink-0 shadow-sm">
                     {{ $categoria->nombre }}
                 </a>
+            @endif
             @endforeach
         </div>
 
-        <!-- Grid responsive: 2 cols móvil, 3 tablet, 4 desktop, 5 XL -->
+        
         <div class="row row-cols-2 row-cols-sm-3 row-cols-lg-4 row-cols-xl-5 g-3 g-lg-4 mb-5 pb-5">
             @forelse($platos as $plato)
-                <div class="col">
+                <div class="col plato-card" 
+                     data-plato-id="{{ $plato->id }}"
+                     data-plato-nombre="{{ $plato->nombre }}"
+                     data-plato-descripcion="{{ $plato->descripcion }}"
+                     data-plato-precio="{{ $plato->precio }}"
+                     data-plato-imagen="{{ $plato->imagen ? asset('storage/' . $plato->imagen) : 'https://placehold.co/400x400/eeeeee/A3A8B8?text=🍣' }}">
+                     
                     <div class="card h-100 border-0 shadow-sm rounded-4 card-sushi">
                         
                         <div class="ratio ratio-1x1 bg-light rounded-top-4 overflow-hidden">
@@ -34,7 +41,7 @@
                         <div class="card-body p-2 px-3 pb-3 position-relative">
                             <h2 class="h6 fw-bold mb-1 text-truncate" style="font-size: 0.9rem;">{{ $plato->nombre }}</h2>
                             <p class="small text-muted mb-0 text-truncate" style="font-size: 0.75rem;">
-                                {{ $plato->descripcion ?? 'Delicioso sushi' }}
+                                {{ $plato->descripcion ?? 'Disfruta de un delicioso plato creado especialmetne para ti!' }}
                             </p>
 
                             <div class="d-flex justify-content-between align-items-center mt-2">
@@ -70,8 +77,51 @@
                 </div>
             @endforelse
         </div>
+        
     </div>
-
     <x-nav-bottom active="carta" />
+
+    @include('cliente.modals.detalles-plato')
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Todas las cards de plato
+    const cards = document.querySelectorAll('.plato-card');
+    
+    cards.forEach(card => {
+        card.style.cursor = 'pointer';
+        
+        card.addEventListener('click', function(e) {
+            // No abrir modal si clickeó en el botón "+" o en el formulario
+            if (e.target.closest('form') || e.target.closest('.add-to-cart-btn')) {
+                return;
+            }
+            
+            const platoId = this.dataset.platoId;
+            const platoNombre = this.dataset.platoNombre;
+            const platoDescripcion = this.dataset.platoDescripcion;
+            const platoPrecio = this.dataset.platoPrecio;
+            const platoImagen = this.dataset.platoImagen;
+            
+            // Llenar el modal
+            document.getElementById('modalPlatoId').value = platoId;
+            document.getElementById('modalPlatoNombre').textContent = platoNombre;
+            document.getElementById('modalPlatoDescripcion').textContent = platoDescripcion || 'Disfruta de un delicioso plato creado especialmente para ti!';
+            document.getElementById('modalPlatoPrecio').textContent = parseFloat(platoPrecio).toFixed(2) + '€';
+            document.getElementById('modalPlatoImagen').src = platoImagen;
+            document.getElementById('modalPlatoImagen').alt = platoNombre;
+            
+            // Actualizar form del modal
+            document.getElementById('modalAddToCartForm').action = `/carrito/add/${platoId}`;
+            
+            // Abrir modal
+            const modal = new bootstrap.Modal(document.getElementById('modalDetallePlato'));
+            modal.show();
+        });
+    });
+    
+});
+
+</script>
 
 </x-layouts.cliente-app>

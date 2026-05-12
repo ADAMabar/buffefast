@@ -40,6 +40,80 @@
             flex-direction: column;
             padding: 1.5rem;
             z-index: 1000;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .sidebar.collapsed {
+            width: 0;
+            padding: 0;
+            overflow: hidden;
+            border-right: none;
+        }
+
+        /* Botón toggle dentro del sidebar (VERSIÓN REDUCIDA) */
+        .sidebar-toggle {
+            position: absolute;
+            top: 20px;
+            right: -24px; /* Menos invasivo */
+            width: 24px;  /* Más delgado */
+            height: 36px; /* Ligeramente más bajo */
+            background: var(--primary-orange);
+            border: none;
+            border-radius: 0 6px 6px 0;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 1001;
+            box-shadow: 2px 0px 6px rgba(0,0,0,0.1);
+            font-size: 0.85rem; /* Icono más pequeño */
+        }
+
+        .sidebar-toggle:hover {
+            background: #e66d00;
+            width: 28px; /* Expansión sutil */
+            right: -28px;
+        }
+
+        .sidebar-toggle i {
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.collapsed .sidebar-toggle i {
+            transform: rotate(180deg);
+        }
+
+        /* Botón flotante cuando sidebar está oculto (VERSIÓN REDUCIDA) */
+        .sidebar-show-btn {
+            position: fixed;
+            top: 20px;
+            left: 0;
+            width: 28px; /* Más delgado */
+            height: 36px;
+            background: var(--primary-orange);
+            border: none;
+            border-radius: 0 6px 6px 0;
+            color: white;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 999;
+            box-shadow: 2px 0px 6px rgba(0,0,0,0.15);
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+        }
+
+        .sidebar-show-btn:hover {
+            width: 32px;
+            background: #e66d00;
+        }
+
+        .sidebar.collapsed + .main-content .sidebar-show-btn {
+            display: flex;
         }
 
         .nav-link-admin {
@@ -53,6 +127,7 @@
             font-weight: 500;
             transition: all 0.2s;
             margin-bottom: 0.5rem;
+            white-space: nowrap;
         }
 
         .nav-link-admin:hover,
@@ -63,6 +138,7 @@
 
         .nav-link-admin i {
             font-size: 1.25rem;
+            flex-shrink: 0;
         }
 
         /* Área Principal */
@@ -70,6 +146,7 @@
             flex-grow: 1;
             overflow-y: auto;
             padding: 2rem;
+            transition: margin-left 0.3s ease;
         }
 
         /* Tarjetas Bento para Mesas */
@@ -360,15 +437,17 @@
 
 <body>
 
-    <aside class="sidebar shadow-sm">
-        <div class="d-flex align-items-center gap-3 mb-5 px-2">
-            <div class="d-inline-flex align-items-center justify-content-center"
-                style="width: 40px; height: 40px; border-radius: 12px; background: rgba(255,122,0,0.1); border: 1px solid var(--primary-orange);">
-                <span style="color: var(--primary-orange); font-weight: 700; font-size: 1.2rem;">B</span>
-            </div>
-            <h2 class="h5 mb-0 fw-bold">Admin TPV</h2>
-        </div>
+    <aside class="sidebar shadow-sm" id="sidebar">
+        <button class="sidebar-toggle" id="sidebarToggle" title="Contraer menú">
+            <i class="bi bi-chevron-left"></i>
+        </button>
 
+        <div class="d-flex align-items-center gap-3 mb-5 px-2">
+
+             <img src="{{ asset('storage/logos/LogoBuffeFast.png') }}" alt="Logo" style="width: 150px; height: 100px;">
+              <h2 class="h5 mb-0 fw-bold">Admin TPV</h2>
+        </div>
+      
         <nav class="d-flex flex-column flex-grow-1">
             <a href="{{ route('admin.mesas') }}" class="nav-link-admin active">
                 <i class="bi bi-grid-fill"></i> Gestión de Mesas
@@ -406,6 +485,10 @@
     </aside>
 
     <main class="main-content">
+        <button class="sidebar-show-btn" id="sidebarShowBtn" title="Expandir menú">
+            <i class="bi bi-chevron-right"></i>
+        </button>
+
         @if ($message = Session::get('success'))
             <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-4 border-0 mb-4" role="alert"
                 style="background-color: #ECFDF5; color: #065F46;">
@@ -427,6 +510,32 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarShowBtn = document.getElementById('sidebarShowBtn');
+
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('collapsed');
+           
+            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+        });
+
+        sidebarShowBtn.addEventListener('click', function() {
+            sidebar.classList.remove('collapsed');
+            localStorage.setItem('sidebarCollapsed', false);
+        });
+
+       
+        document.addEventListener('DOMContentLoaded', function() {
+            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            if (isCollapsed) {
+                sidebar.classList.add('collapsed');
+            }
+        });
+    </script>
 
 </body>
 

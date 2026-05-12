@@ -112,10 +112,13 @@
     .card-sushi:active {
         transform: scale(0.98);
     }
-
-
-
-
+    .mapa-ancho-completo iframe {
+        width: 100% !important;
+        height: 300px !important; /* Mantiene el alto original de tu iframe */
+        border: 0 !important;
+        display: block;
+    }
+        
 @media (pointer: fine) {
     .hide-scrollbar {
         -ms-overflow-style: auto;

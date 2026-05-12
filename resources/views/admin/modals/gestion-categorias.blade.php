@@ -13,9 +13,8 @@
                     <label class="form-label fw-bold small text-muted">AÑADIR NUEVA CATEGORÍA</label>
 
                     <div class="mb-3">
-                        <input type="text" name="nombre" class="form-control" placeholder="Nombre de la categoría"
-                            required>
-                        @error('nombre')
+                        <input type="text" name="nombre" class="form-control" placeholder="Nombre de la categoría" required>
+                        @error('nombre', 'categoriaBag')
                             <div class="text-danger small mt-1">{{ $message }}</div>
                         @enderror
                     </div>
@@ -23,7 +22,7 @@
                     <div class="mb-3">
                         <input type="number" name="orden" class="form-control"
                             placeholder="En que orden quieres que parezca esta categoria?" required>
-                        @error('orden')
+                        @error('orden', 'categoriaBag')
                             <div class="text-danger small mt-1">{{ $message }}</div>
                         @enderror
                     </div>
@@ -64,13 +63,12 @@
             </div>
         </div>
     </div>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Si hay errores de validación para nombre u orden, abrir el modal
-        @if($errors->has('nombre') || $errors->has('orden'))
-            var modalCategorias = new bootstrap.Modal(document.getElementById('modalCategorias'));
-            modalCategorias.show();
-        @endif
-    });
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    @if($errors->hasBag('categoriaBag'))
+        var modalCategorias = new bootstrap.Modal(document.getElementById('modalCategorias'));
+        modalCategorias.show();
+    @endif
+});
 </script>
 </div>

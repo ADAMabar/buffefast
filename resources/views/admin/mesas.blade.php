@@ -12,9 +12,7 @@
                     <i class="bi bi-circle-fill me-1 small"></i> Libres
                 </button>
             </span>
-            <span class="badge rounded-pill bg-white text-warning border px-3 py-2 me-2">
-                <i class="bi bi-circle-fill me-1 small"></i> Ocupadas
-            </span>
+
 
             <button type="button" class="btn btn-warning position-relative font-weight-bold" data-bs-toggle="modal"
                 data-bs-target="#modalPidiendoCuenta">
@@ -98,7 +96,7 @@
                                         style="letter-spacing: 0.2rem;">{{ $sesionActiva->codigo }}</span>
                                 </div>
                                 <p class="small text-muted mb-0"><i class="bi bi-clock"></i> Abierta
-                                    {{ $sesionActiva->created_at->diffForHumans() }}
+                                    {{ $sesionActiva->created_at->locale('es')->diffForHumans() }}
                                 </p>
                             </div>
 

@@ -46,12 +46,12 @@ class ConfiguracionAdminController extends Controller
     {
         // Excluimos el token CSRF y variables que no van a la BD directamente
         $datos = $request->except(['_token', 'porcentaje_impuestos_custom']);
-
+ 
         // Truco para el IVA personalizado: si seleccionaron "otro", guardamos el valor custom
         if ($request->porcentaje_impuestos === 'otro' && $request->filled('porcentaje_impuestos_custom')) {
             $datos['porcentaje_impuestos'] = $request->porcentaje_impuestos_custom;
         }
-
+ 
        
         $checkboxes = [
             'penalizacion_activa', 
@@ -61,23 +61,42 @@ class ConfiguracionAdminController extends Controller
             'mostrar_wifi_redes', 'modo_mantenimiento', 'bloqueo_ip_activo',
             'registro_log_pedidos', 'notificacion_email_admin'
         ];
-
+ 
         foreach ($checkboxes as $chk) {
             $datos[$chk] = $request->has($chk) ? 'true' : 'false';
         }
-
+ 
+        // Procesar logo si se subió uno nuevo
+        if ($request->hasFile('logo')) {
+            $archivo = $request->file('logo');
+            
+            // Validar tipo de archivo
+            $extension = $archivo->getClientOriginalExtension();
+            $permitidos = ['png', 'svg', 'jpg', 'jpeg'];
+            
+            if (in_array(strtolower($extension), $permitidos)) {
+                // Generar nombre único
+                $nombreArchivo = 'logo_' . time() . '.' . $extension;
+                
+                // Guardar en storage/public/logos
+                $ruta = $archivo->storeAs('logos', $nombreArchivo, 'public');
+                
+                // Guardar URL en datos
+                $datos['logo_url'] = '/storage/' . $ruta;
+            }
+        } elseif ($request->filled('logo_actual')) {
+            // Mantener logo anterior si no se subió nuevo
+            $datos['logo_url'] = $request->logo_actual;
+        }
+ 
         // Guardamos cada valor en la base de datos
         foreach ($datos as $clave => $valor) {
             Configuracion::where('clave', $clave)->update(['valor' => $valor]);
         }
-
+ 
         cache()->forget('ajustes_globales');
-
+ 
         return redirect()->back()->with('success', 'Configuración guardada correctamente.');
-    }
-
-    public function subirImagen(Request $request){
-        
     }
 
 

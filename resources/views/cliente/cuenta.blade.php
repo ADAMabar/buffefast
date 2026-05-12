@@ -3,6 +3,22 @@
 <x-header-carta :sesion="$sesion" :rondaActual="$rondaActual" />
 
     <div class="p-3 mb-5 pb-5">
+         {{-- Notificación de penalización --}}
+        @if(configuracion('penalizacion_activa') === 'true')
+        <div id="penalizacionAlert" class="alert alert-warning alert-dismissible fade show rounded-4 border-0 shadow-sm mb-3" 
+             style="background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); color: #92400E; display: none;">
+            <div class="d-flex align-items-start gap-2">
+                <i class="bi bi-exclamation-triangle-fill fs-4 flex-shrink-0"></i>
+                <div>
+                    <strong class="d-block mb-1">Aviso importante</strong>
+                    <span class="small">
+                        {{ str_replace('{precio}', configuracion('precio_penalizacion', '2.00') . '€', configuracion('mensaje_penalizacion', 'Cargo de {precio}€ por plato sobrante.')) }}
+                    </span>
+                </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar" onclick="dismissPenalizacion()"></button>
+        </div>
+        @endif
 
         <div class="d-flex gap-2 mb-4">
         <form action="{{ route('cliente.cuenta.pedir') }}" method="POST" class="w-100">
@@ -61,5 +77,23 @@
     </div>
 
     <x-nav-bottom active="cuenta" />
+
+        <script>
+        // Mostro  o oculto alerta de penalización según localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            const alertDismissed = localStorage.getItem('penalizacionAlertDismissed');
+            const alertEl = document.getElementById('penalizacionAlert');
+            
+            // hare que solo se vea una vez en toda la sesion para que no moleste
+            if (alertEl && !alertDismissed) {
+                alertEl.style.display = 'block';
+            }
+        });
+
+        function dismissPenalizacion() {
+            localStorage.setItem('penalizacionAlertDismissed', 'true');
+        }
+    </script>
+
 
 </x-layouts.cliente-app>

@@ -45,7 +45,7 @@ public function index(Request $request)
             $platos = $query->get();
 
             
-            $rondaActual = $sesion->pedidos()->count() + 1;
+            $rondaActual = $sesion->pedidos()->where('cliente_id', $cliente_id)->count() + 1;
             $nombreRestaurante = configuracion('nombre_restaurante');
             
 
