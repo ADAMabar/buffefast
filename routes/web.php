@@ -17,7 +17,7 @@ use App\Http\Controllers\Admin\CategoriaAdminController;
 use App\Http\Controllers\Admin\ConfiguracionAdminController;
 use App\Http\Controllers\Admin\HistorialVentasController;
 
-use App\Http\Controllers\Cocina\CocinaController;
+ use App\Livewire\Cocina\PanelCocina;
 
 
 /*
@@ -119,11 +119,12 @@ Route::middleware('auth')->group(function () {
 
 
    
-    Route::middleware(['can:es-cocina'])->group(function () {
-    Route::get('/cocina', [CocinaController::class, 'inicio'])->name('cocina.inicio');
-    Route::get('/cocina/ver-tablero', [CocinaController::class, 'verTablero'])->name('cocina.verTablero');
-    Route::post('/cocina/pedido/{pedido}/actualizar-estado', [CocinaController::class, 'actualizarEstado'])->name('cocina.actualizarEstado');     
-    });
+
+
+Route::middleware(['can:es-cocina'])->group(function () {
+    // Una sola ruta es suficiente para que todo el tablero funcione
+    Route::get('/cocina', PanelCocina::class)->name('cocina.inicio');
+});
 
 });
 

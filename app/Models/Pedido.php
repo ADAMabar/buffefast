@@ -12,7 +12,11 @@ class Pedido extends Model
     protected $table = 'pedidos';
 
     // CORRECCIÓN: Quitamos plato_id y cantidad de aquí, añadimos cliente_id y ronda
-    protected $fillable = ['sesion_id', 'cliente_id', 'ronda', 'estado'];
+    protected $fillable = ['sesion_id', 'cliente_id', 'ronda', 'estado', 'visible_cocina'];
+
+    protected $casts = [
+        'visible_cocina' => 'boolean',
+    ];
 
     // Un pedido pertenece a una sesión
     public function sesion()

@@ -16,7 +16,7 @@
 
             <button type="button" class="btn btn-warning position-relative font-weight-bold" data-bs-toggle="modal"
                 data-bs-target="#modalPidiendoCuenta">
-                🧾 Mesas pidiendo la cuenta
+                Mesas pidiendo la cuenta
 
                 @if($mesasPidiendoCuenta->count() > 0)
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">

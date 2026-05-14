@@ -44,9 +44,9 @@
                             <h5 class="fw-bold mb-0 text-orange">Ronda {{ $pedido->ronda }}</h5>
 
                             @if($pedido->estado == 'pendiente')
-                                <span class="badge bg-warning text-dark rounded-pill">En cocina 🍳</span>
+                                <span class="badge bg-warning text-dark rounded-pill">En cocina</span>
                             @elseif($pedido->estado == 'servido')
-                                <span class="badge bg-success rounded-pill">Servido ✅</span>
+                                <span class="badge bg-success rounded-pill">Servido</span>
                             @else
                                 <span class="badge bg-secondary rounded-pill">{{ ucfirst($pedido->estado) }}</span>
                             @endif
