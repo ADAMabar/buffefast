@@ -106,7 +106,7 @@ public function destroy(Mesa $mesa)
     public function activar(Request $request, Mesa $mesa)
     {
         try {
-            // Prevenir activar una mesa que ya está activa
+            
             $ocupada = $mesa->sesiones()
                 ->whereIn('estado', ['activa', 'solicitando_cuenta'])
                 ->exists();

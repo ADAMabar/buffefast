@@ -29,21 +29,13 @@ class PanelCocina extends Component
         $pedido = Pedido::find($id);
 
         if ($pedido) {
-            // Aquí conservamos tu validación original
             if ($pedido->estado === 'pendiente' && $nuevoEstado === 'servido') {
-                // En lugar de devolver un JSON 400, simplemente detenemos la acción.
-                // (Opcional: Podrías usar $this->js('alert("Orden incorrecta")'); para avisar al usuario)
                 return; 
             }
-
-            // Actualizamos el estado
             $pedido->update(['estado' => $nuevoEstado]);
         }
     }
 
-    /**
-     * Este método es llamado por el botón "Limpiar" en la columna de Listos.
-     */
     public function limpiarListos()
     {
       Pedido::where('estado', 'servido')
@@ -85,7 +77,7 @@ class PanelCocina extends Component
 
     public function render()
     {
-        // Apuntamos a la vista dentro de la subcarpeta 'cocina'
+       
         return view('livewire.cocina.panel-cocina');
     }
 }

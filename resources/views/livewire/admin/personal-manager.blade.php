@@ -14,7 +14,7 @@ new class extends Component
         <div class="col-12 col-xl-5">
             <div class="cfg-card h-100">
                 <div class="cfg-card__head">
-                    <div class="cfg-card__icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
+                    <div class="cfg-card__icon" style="background: rgba(255, 212, 118, 0.1); color: #F99916;">
                         <i class="bi bi-person-plus-fill"></i>
                     </div>
                     <div>
@@ -60,21 +60,26 @@ new class extends Component
                     </div>
                 </div>
 
-                <button type="button" class="btn-save w-100 justify-content-center mt-auto" wire:click="crearEmpleado" wire:loading.attr="disabled" wire:target="crearEmpleado">
-                    <span wire:loading.remove wire:target="crearEmpleado">
-                        <i class="bi bi-plus-circle me-1"></i> Crear Cuenta
-                    </span>
-                    <span wire:loading wire:target="crearEmpleado">
-                        <span class="spinner-border spinner-border-sm me-1" role="status"></span> Creando...
-                    </span>
-                </button>
+                <button type="button" 
+                class="btn w-100 d-flex justify-content-center align-items-center mt-auto text-white fw-bold shadow-sm rounded-pill py-2" 
+                style="background-color: #FF7A00;" 
+                wire:click="crearEmpleado" 
+                wire:loading.attr="disabled" 
+                wire:target="crearEmpleado">
+                <span wire:loading.remove wire:target="crearEmpleado">
+                    <i class="bi bi-plus-circle me-1"></i> Crear Cuenta
+                </span>
+                <span wire:loading wire:target="crearEmpleado">
+                    <span class="spinner-border spinner-border-sm me-1" role="status"></span> Creando...
+                </span>
+            </button>
             </div>
         </div>
 
         <div class="col-12 col-xl-7">
             <div class="cfg-card d-flex flex-column h-100">
                 <div class="cfg-card__head">
-                    <div class="cfg-card__icon" style="background: rgba(107, 114, 128, 0.1); color: #6b7280;">
+                    <div class="cfg-card__icon" style="background: rgba(255, 212, 118, 0.1); color: #F99916;">
                         <i class="bi bi-people-fill"></i>
                     </div>
                     <div>
@@ -89,7 +94,7 @@ new class extends Component
                             <div class="p-3 border rounded-3 d-flex justify-content-between align-items-center" style="background: #FAFAFA;">
                                 <div class="d-flex align-items-center gap-3">
                                     <div class="d-flex align-items-center justify-content-center text-white fw-bold rounded-circle shadow-sm" 
-                                         style="width: 42px; height: 42px; background: {{ $empleado->rol == 'admin' ? '#111827' : '#FF7A00' }};">
+                                         style="width: 42px; height: 42px; background: {{ $empleado->rol == 'admin' ? '#F99916' : '#FF7A00' }};">
                                         {{ strtoupper(substr($empleado->nombre, 0, 1)) }}
                                     </div>
                                     <div>
@@ -131,7 +136,8 @@ new class extends Component
         <div class="col-12 col-xl-5">
             <div class="cfg-card h-100">
                 <div class="cfg-card__head">
-                    <div class="cfg-card__icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                    {{-- Cambiado el icono al tono naranja --}}
+                    <div class="cfg-card__icon" style="background: rgba(255, 212, 118, 0.1); color: #F99916;">
                         <i class="bi bi-cash-stack"></i>
                     </div>
                     <div>
@@ -163,7 +169,13 @@ new class extends Component
                     <p class="cfg-hint mb-0 ms-1 mt-1">Si la desactivas, los camareros no podrán seleccionarla al cobrar.</p>
                 </div>
 
-                <button type="button" class="btn-save w-100 justify-content-center mt-auto" style="background: #10b981;" wire:click="crearCaja" wire:loading.attr="disabled" wire:target="crearCaja">
+                {{-- Botón "Añadir Caja" con el mismo estilo naranja pill --}}
+                <button type="button" 
+                    class="btn w-100 d-flex justify-content-center align-items-center mt-auto text-white fw-bold shadow-sm rounded-pill py-2" 
+                    style="background-color: #FF7A00;" 
+                    wire:click="crearCaja" 
+                    wire:loading.attr="disabled" 
+                    wire:target="crearCaja">
                     <span wire:loading.remove wire:target="crearCaja">
                         <i class="bi bi-plus-circle me-1"></i> Añadir Caja
                     </span>
@@ -177,7 +189,8 @@ new class extends Component
         <div class="col-12 col-xl-7">
             <div class="cfg-card d-flex flex-column h-100">
                 <div class="cfg-card__head">
-                    <div class="cfg-card__icon" style="background: rgba(107, 114, 128, 0.1); color: #6b7280;">
+                    {{-- Cambiado el icono al tono naranja --}}
+                    <div class="cfg-card__icon" style="background: rgba(255, 212, 118, 0.1); color: #F99916;">
                         <i class="bi bi-hdd-network"></i>
                     </div>
                     <div>
@@ -191,8 +204,9 @@ new class extends Component
                         @forelse($cajas as $caja)
                             <div class="p-3 border rounded-3 d-flex justify-content-between align-items-center" style="background: #FAFAFA;">
                                 <div class="d-flex align-items-center gap-3">
+                                    {{-- Círculo de la caja: Naranja si está activa, gris si no --}}
                                     <div class="d-flex align-items-center justify-content-center text-white fw-bold rounded-circle shadow-sm" 
-                                         style="width: 42px; height: 42px; background: {{ $caja->activa ? '#10b981' : '#6b7280' }}; transition: background 0.3s;">
+                                         style="width: 42px; height: 42px; background: {{ $caja->activa ? '#FF7A00' : '#6b7280' }}; transition: background 0.3s;">
                                         <i class="bi bi-box-seam"></i>
                                     </div>
                                     <div>
@@ -202,8 +216,9 @@ new class extends Component
                                 </div>
                                 
                                 <div class="d-flex align-items-center gap-3">
-                                    {{-- Botón para encender/apagar la caja rápido --}}
-                                    <button class="btn btn-sm {{ $caja->activa ? 'btn-outline-success' : 'btn-outline-secondary' }}" 
+                                    {{-- Botón toggle adaptado al naranja --}}
+                                    <button class="btn btn-sm rounded-pill shadow-sm" 
+                                            style="{{ $caja->activa ? 'background-color: #FFF7ED; color: #FF7A00; border: 1px solid #FF7A00;' : 'background-color: #f8f9fa; color: #6c757d; border: 1px solid #dee2e6;' }}"
                                             wire:click="toggleCaja({{ $caja->id }})" title="Clic para activar/desactivar">
                                         <i class="bi {{ $caja->activa ? 'bi-toggle-on' : 'bi-toggle-off' }} fs-5"></i>
                                     </button>

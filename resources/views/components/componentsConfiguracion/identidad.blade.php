@@ -5,7 +5,7 @@
         <div class="col-12 col-xl-7">
             <div class="cfg-card">
                 <div class="cfg-card__head">
-                    <div class="cfg-card__icon" style="background: rgba(255,122,0,0.1); color: var(--primary-orange);">
+                    <div class="cfg-card__icon" style="background: rgba(255, 212, 118, 0.1); color: #F99916;">
                         <i class="bi bi-building"></i>
                     </div>
                     <div>
@@ -62,13 +62,12 @@
             </div>
         </div>
 
-        {{-- Columna Derecha: Marca y Redes --}}
+
         <div class="col-12 col-xl-5 d-flex flex-column gap-3">
 
-            {{-- Tarjeta: Marca Visual --}}
             <div class="cfg-card">
                 <div class="cfg-card__head">
-                    <div class="cfg-card__icon" style="background: rgba(139,92,246,0.1); color: #8B5CF6;">
+                    <div class="cfg-card__icon" style="background: rgba(255, 212, 118, 0.1); color: #F99916;">
                         <i class="bi bi-palette2"></i>
                     </div>
                     <div>
@@ -102,7 +101,7 @@
             {{-- Tarjeta de Redes y WiFi --}}
             <div class="cfg-card flex-grow-1">
                 <div class="cfg-card__head">
-                    <div class="cfg-card__icon" style="background: rgba(16,185,129,0.1); color: #10B981;">
+                    <div class="cfg-card__icon" style="background: rgba(255, 212, 118, 0.1); color: #F99916;">
                         <i class="bi bi-share"></i>
                     </div>
                     <div>

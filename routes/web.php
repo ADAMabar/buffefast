@@ -59,6 +59,10 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
     
+    // ESTAS SON LAS QUE HEMOS MOVIDO AQUÍ PARA QUE NO PARPADEE
+    Route::get('/olvide-mi-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
+    Route::post('/olvide-mi-password', [AuthController::class, 'processForgotPassword'])->name('password.email');
+
     Route::get('/refresh-csrf', function() {
         return response()->json(['token' => csrf_token()]);
     });

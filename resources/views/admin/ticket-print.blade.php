@@ -112,7 +112,7 @@
     </style>
 </head>
 <body>
-    {{-- Botón imprimir (solo visible en pantalla) --}}
+    {{-- Botón imprimir --}}
     <div class="no-print" style="text-align: center; margin-bottom: 10px;">
         <button onclick="window.print()" class="btn-print">
             <i class="bi bi-printer"></i> Imprimir Ticket (Ctrl+P)

@@ -5,7 +5,7 @@
                     <div class="col-12 col-xl-6">
                         <div class="cfg-card">
                             <div class="cfg-card__head">
-                                <div class="cfg-card__icon" style="background: rgba(255,122,0,0.1); color: var(--primary-orange);">
+                                <div class="cfg-card__icon" style="background: rgba(255, 212, 118, 0.1); color: #F99916;">
                                     <i class="bi bi-stopwatch-fill"></i>
                                 </div>
                                 <div>

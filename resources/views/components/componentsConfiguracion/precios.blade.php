@@ -6,7 +6,7 @@
                     <div class="col-12 col-xl-7">
                         <div class="cfg-card">
                             <div class="cfg-card__head">
-                                <div class="cfg-card__icon" style="background: rgba(16, 185, 129, 0.1); color: #10B981;">
+                                <div class="cfg-card__icon" style="background: rgba(255, 212, 118, 0.1); color: #F99916;">
                                     <i class="bi bi-cash-coin"></i>
                                 </div>
                                 <div>
@@ -73,7 +73,7 @@
                     <div class="col-12 col-xl-5">
                         <div class="cfg-card d-flex flex-column">
                             <div class="cfg-card__head">
-                                <div class="cfg-card__icon" style="background: rgba(99, 102, 241, 0.1); color: #6366f1;">
+                                <div class="cfg-card__icon" style="background:rgba(255, 212, 118, 0.1); color: #F99916;">
                                     <i class="bi bi-receipt-cutoff"></i>
                                 </div>
                                 <div>

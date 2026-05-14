@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content rounded-4 border-0 shadow-lg">
             <div class="modal-header border-bottom-0 bg-light rounded-top-4">
-                <h5 class="modal-title fw-bold text-success">
+                <h5 class="modal-title fw-bold text-dark">
                     <i class="bi bi-check-circle-fill me-2"></i>Mesas Disponibles
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

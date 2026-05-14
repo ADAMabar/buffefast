@@ -8,12 +8,12 @@
 
 
     <style>
-        /* Tarjetas más compactas */
+    
         .cfg-card {
             background: #fff;
             border-radius: 16px;
             border: 1px solid var(--border-light);
-            padding: 1.25rem; /* Menos espacio muerto */
+            padding: 1.25rem; 
             height: 100%;
             transition: all 0.2s;
         }
@@ -27,7 +27,7 @@
             gap: 0.8rem;
             margin-bottom: 1.2rem;
             padding-bottom: 0.8rem;
-            border-bottom: 1px solid #f3f4f6; /* Separador sutil */
+            border-bottom: 1px solid #f3f4f6; 
         }
         .cfg-card__icon {
             width: 40px;
@@ -51,7 +51,6 @@
             color: var(--text-muted);
         }
 
-        /* Inputs y Labels más profesionales */
         .cfg-label {
             font-weight: 600;
             font-size: 0.8rem;
@@ -60,7 +59,7 @@
         }
         .form-control, .input-group-text {
             font-size: 0.875rem;
-            padding: 0.45rem 0.75rem; /* Inputs un poco más finos */
+            padding: 0.45rem 0.75rem; 
         }
         .cfg-hint {
             font-size: 0.7rem;
@@ -70,7 +69,6 @@
             line-height: 1.2;
         }
         
-        /* Navegación de Pestañas */
         .nav-pills .nav-link {
             color: var(--text-muted);
             font-weight: 600;
@@ -88,7 +86,7 @@
             box-shadow: 0 4px 10px rgba(255, 122, 0, 0.25);
         }
 
-        /* Botón Guardar Flotante */
+        
         .cfg-save-bar {
             position: fixed;
             bottom: 1.5rem;
@@ -167,7 +165,7 @@
         
     </form>
     <script>
-        // Preview del Logo
+ 
         document.getElementById('logoInput').addEventListener('change', function(e) {
         const file = e.target.files[0];
         const wrap = document.getElementById('logoWrap');
@@ -181,7 +179,7 @@
             };
             reader.readAsDataURL(file);
         } else {
-            // Si no hay archivo nuevo, mantener la imagen anterior o ocultar
+            
             const logoActual = document.querySelector('input[name="logo_actual"]');
             if (logoActual && logoActual.value) {
                 img.src = logoActual.value;

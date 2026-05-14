@@ -4,7 +4,7 @@
         <div class="modal-content rounded-4 border-0 shadow-lg">
 
             <div class="modal-header border-bottom-0 bg-light rounded-top-4">
-                <h5 class="modal-title fw-bold text-warning" id="modalPidiendoCuentaLabel">
+                <h5 class="modal-title fw-bold text-dark" id="modalPidiendoCuentaLabel">
                     <i class="bi bi-receipt me-2"></i>Mesas Listas para Cobrar
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

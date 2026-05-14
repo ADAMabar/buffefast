@@ -5,39 +5,56 @@
             <p class="text-muted">Vista general del salón y estado de las cuentas.</p>
         </div>
 
-        <div>
-            <span class="badge rounded-pill bg-white text-success border px-3 py-2 me-2">
-                <button type="button" class="btn btn-link text-decoration-none text-success p-0 m-0"
-                    data-bs-toggle="modal" data-bs-target="#modalMesasLibres">
-                    <i class="bi bi-circle-fill me-1 small"></i> Libres
-                </button>
+      <div class="d-flex align-items-center gap-3">
+    
+   
+   <button type="button" 
+    class="btn rounded-pill fw-bold px-4 py-2 shadow-sm d-flex align-items-center"
+    style="background-color: #FFF7ED; color: #C2410C; border: 1px solid #C2410C;"
+    data-bs-toggle="modal" 
+    data-bs-target="#modalMesasLibres">
+    <i class="bi bi-circle-fill me-2" style="font-size: 0.7rem;"></i> Mesas Libres
+</button>
+
+    <button type="button" 
+        class="btn btn-success rounded-pill px-3 py-2 fw-medium d-flex align-items-center position-relative shadow-sm" 
+        data-bs-toggle="modal"
+        data-bs-target="#modalPidiendoCuenta">
+        <i class="bi bi-cash-stack me-2"></i>
+        Pidiendo Cuenta
+
+        @if($mesasPidiendoCuenta->count() > 0)
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light">
+                {{ $mesasPidiendoCuenta->count() }}
+                <span class="visually-hidden">mesas esperando</span>
             </span>
+        @endif
+    </button>
 
-
-            <button type="button" class="btn btn-warning position-relative font-weight-bold" data-bs-toggle="modal"
-                data-bs-target="#modalPidiendoCuenta">
-                Mesas pidiendo la cuenta
-
-                @if($mesasPidiendoCuenta->count() > 0)
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                        {{ $mesasPidiendoCuenta->count() }}
-                        <span class="visually-hidden">mesas esperando</span>
-                    </span>
-                @endif
-            </button>
-
-        </div>
+</div>
     </div>
-    <div class="d-flex gap-2 mb-4">
-        <button type="button" class="btn btn-outline-dark fw-bold" data-bs-toggle="modal"
-            data-bs-target="#modalGestionMesas">
-            <i class="bi bi-gear-fill me-1"></i> Gestionar Mesas
-        </button>
+   <div class="d-flex align-items-center gap-3 mb-4">
+    
+    <button type="button" 
+        class="btn btn-white border rounded-pill px-4 py-2 fw-semibold d-flex align-items-center shadow-sm" 
+        data-bs-toggle="modal"
+        data-bs-target="#modalGestionMesas"
+        style="background: var(--primary-orange); color: #ffffff; border-color: #ffffff;">
+        <i class="bi bi-gear-fill me-2 opacity-75"></i>
+        Gestionar Mesas
+    </button>
 
-        <button type="button" class="btn btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#modalAgregarMesa">
-            <i class="bi bi-plus-lg me-1"></i> Agregar Mesa
-        </button>
-    </div>
+  
+    <button type="button" 
+        class="btn rounded-pill px-4 py-2 fw-semibold d-flex align-items-center text-white shadow-sm" 
+        data-bs-toggle="modal" 
+        data-bs-target="#modalAgregarMesa"
+        style="background-color: var(--primary-orange); border: none;">
+        <i class="bi bi-plus-lg me-2"></i>
+        Agregar Mesa
+    </button>
+
+</div>
 
     <div class="row g-4">
 

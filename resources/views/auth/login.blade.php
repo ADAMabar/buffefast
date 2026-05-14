@@ -27,6 +27,10 @@
                     style="color: var(--text-main);">Contraseña</label>
                 <input type="password" class="form-control form-control-2026" id="password" name="password"
                     placeholder="••••••••" required>
+                    <br>
+                   <a href="{{ route('password.request') }}" class="small text-decoration-none fw-medium" style="color: var(--primary-orange);">
+                        ¿Olvidaste tu contraseña?
+                    </a>  
             </div>
 
             <button type="submit" class="btn btn-orange w-100 mb-3">

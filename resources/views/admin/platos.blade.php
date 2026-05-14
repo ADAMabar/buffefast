@@ -19,18 +19,30 @@
         </div>
     </div>
 
-    {{-- ── Action buttons ── --}}
-    <div class="d-flex flex-wrap gap-2 mb-4">
-        <button type="button" class="btn btn-outline-dark fw-bold" data-bs-toggle="modal"
-            data-bs-target="#modalCategorias">
-            <i class="bi bi-tags me-1"></i> Gestionar Categorías
-        </button>
-        <button type="button" class="btn btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#modalPlato">
-            <i class="bi bi-plus-lg me-1"></i> Agregar Plato
-        </button>
-    </div>
+   <div class="d-flex align-items-center gap-3 mb-4">
+    
+    {{-- BOTÓN: GESTIONAR CATEGORÍAS (Estilo neutro/blanco) --}}
+    <button type="button" 
+        class="btn btn-white border rounded-pill px-4 py-2 fw-semibold d-flex align-items-center shadow-sm" 
+        data-bs-toggle="modal"
+        data-bs-target="#modalCategorias"
+        style="background: var(--primary-orange); color: #ffffff; border-color: #ffffff;">
+        <i class="bi bi-tags me-2 opacity-75"></i>
+        Gestionar Categorías
+    </button>
 
-    {{-- ── Search ── --}}
+    {{-- BOTÓN: AGREGAR PLATO (Naranja protagonista) --}}
+    <button type="button" 
+        class="btn rounded-pill px-4 py-2 fw-semibold d-flex align-items-center text-white shadow-sm" 
+        data-bs-toggle="modal" 
+        data-bs-target="#modalPlato"
+        style="background-color: var(--primary-orange); border: none;">
+        <i class="bi bi-plus-lg me-2"></i>
+        Agregar Plato
+    </button>
+
+</div>
+
     <div class="mb-4">
         <div class="input-group shadow-sm rounded-pill overflow-hidden border">
             <span class="input-group-text bg-white border-0 ps-4">
@@ -182,7 +194,7 @@
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#modalEditarPlato{{ $plato->id }}"
                                                     aria-label="Editar {{ $plato->nombre }}"
-                                                    style="background-color: rgba(13,110,253,0.1); color: #0d6efd; border: 1px solid rgba(13,110,253,0.2);">
+                                                    style="background-color: rgba(253, 217, 139, 0.39); color: #b86c02; border: 1px solid rgba(253, 213, 13, 0.2);">
                                                     <i class="bi bi-pencil"></i>
                                                     <span class="d-none d-sm-inline ms-1">Editar</span>
                                                 </button>

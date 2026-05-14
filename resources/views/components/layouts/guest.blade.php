@@ -64,7 +64,6 @@
             color: var(--text-muted);
         }
 
-        /* Botón Naranja Moderno */
         .btn-orange {
             background-color: var(--primary-orange);
             color: #FFFFFF;
@@ -99,7 +98,7 @@ window.addEventListener('pageshow', function(event) {
         fetch('/refresh-csrf')
             .then(r => r.json())
             .then(data => {
-                // Actualizar el input _token del formulario
+                
                 const tokenInput = document.querySelector('input[name="_token"]');
                 if (tokenInput) {
                     tokenInput.value = data.token;

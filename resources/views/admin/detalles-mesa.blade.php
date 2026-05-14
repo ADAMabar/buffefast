@@ -3,7 +3,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <a href="{{ route('admin.mesas') }}" class="btn btn-sm btn-outline-secondary mb-2 rounded-pill px-3">
-                <i class="bi bi-arrow-left me-1"></i> Volver al Salón
+                <i class="bi bi-arrow-left me-1"></i> Volver al panel
             </a>
             <h1 class="h3 fw-bold mb-0">Mesa #{{ $mesa->numero }}</h1>
             <p class="text-muted mb-0">
@@ -12,61 +12,77 @@
             </p>
         </div>
 
-        <div class="d-flex gap-2">
-            <a href="{{ route('admin.mesa.ticket', $mesa->id) }}" 
+        <div class="d-flex align-items-center gap-3">
+   
+     <a href="{{ route('admin.mesa.ticket', $mesa->id) }}" 
                target="_blank"
-               class="btn btn-primary fw-bold shadow-sm rounded-pill px-4 py-2">
-                <i class="bi bi-printer me-1"></i> Ticket
-            </a>
+               class="btn rounded-pill fw-bold px-4 py-2 shadow-sm d-flex align-items-center"
+               style="background-color: #FFF7ED; color: #C2410C; border: 1px solid #C2410C;">
+                <i class="bi bi-printer me-2"></i> Ticket
+        </a>
 
-            <button type="button" class="btn btn-success fw-bold px-4 fs-5" data-bs-toggle="modal"
-                data-bs-target="#modalCobrar">
-                <i class="bi bi-cash-coin me-2"></i>Cobrar Mesa
-            </button>
-        </div>
+    {{-- BOTÓN: COBRAR MESA (Estilo Pill / Sólido) --}}
+    <button type="button" 
+        class="btn btn-success rounded-pill fw-bold px-4 py-2 shadow-sm d-flex align-items-center" 
+        data-bs-toggle="modal"
+        data-bs-target="#modalCobrar">
+        <i class="bi bi-cash-coin me-2"></i> Cobrar Mesa
+    </button>
+</div>
     </div>
+
 
     <div class="row g-3 mb-4">
         <div class="col-12 col-md-4">
-            <div class="card border-0 bg-primary text-white shadow-sm rounded-4 h-100 p-2">
+            <div class="card border-0 shadow-sm rounded-4 h-100 p-2" style="background-color: #F99916; color: #FFFFFF;">
                 <div class="card-body">
-                    <h6 class="text-white-50 fw-bold mb-1"><i class="bi bi-arrow-repeat me-1"></i> numero de personas
+                    <h6 class="fw-bold mb-1" style="color: #FFF7ED;">
+                        <i class="bi bi-arrow-repeat me-1"></i> número de personas
                     </h6>
                     <h2 class="fw-bold mb-0">{{ $sesionActiva->clientes()->count() }}</h2>
                 </div>
             </div>
         </div>
+
         <div class="col-12 col-md-4">
-            <div class="card border-0 bg-dark text-white shadow-sm rounded-4 h-100 p-2">
+            <div class="card border-0 shadow-sm rounded-4 h-100 p-2" style="background-color: #F99916; color: #FFFFFF;">
                 <div class="card-body">
-                    <h6 class="text-white-50 fw-bold mb-1"><i class="bi bi-basket-fill me-1"></i> Total Platos</h6>
+                    <h6 class="fw-bold mb-1" style="color: #FFF7ED;">
+                        <i class="bi bi-basket-fill me-1"></i> Total Platos
+                    </h6>
                     <h2 class="fw-bold mb-0">
                         {{ $pedidos->sum(function ($pedido) {
-    return $pedido->platos->sum('pivot.cantidad'); }) }}
+                            return $pedido->platos->sum('pivot.cantidad'); 
+                        }) }}
                     </h2>
                 </div>
             </div>
         </div>
+
         <div class="col-12 col-md-4">
-            <div class="card border-0 bg-dark text-white shadow-sm rounded-4 h-100 p-2">
+            <div class="card border-0 shadow-sm rounded-4 h-100 p-2" style="background-color: #F99916; color: #FFFFFF;">
                 <div class="card-body">
-                    <h6 class="text-white-50 fw-bold mb-1"><i class="bi bi-currency-euro"></i>Total junto con extras no
-                        incluidos en el buffet
+                    <h6 class="fw-bold mb-1" style="color: #FFF7ED;">
+                        <i class="bi bi-currency-euro"></i> Total + extras
                     </h6>
-                    <h2 class="fw-bold mb-0">{{ number_format($totalMesa, 2, '.', ',') }}</h2>
+                    <h2 class="fw-bold mb-0">{{ number_format($totalMesa, 2, '.', ',') }}€</h2>
                 </div>
             </div>
         </div>
+
         <div class="col-12 col-md-4">
-            <div class="card border-0 bg-info text-dark shadow-sm rounded-4 h-100 p-2">
+            <div class="card border-0 shadow-sm rounded-4 h-100 p-2" style="background-color: #F99916; color: #FFFFFF;">
                 <div class="card-body">
-                    <h6 class="text-dark-50 fw-bold mb-1 opacity-75"><i class="bi bi-stopwatch-fill me-1"></i> Tiempo en
-                        mesa</h6>
+                    <h6 class="fw-bold mb-1" style="color: #FFF7ED;">
+                        <i class="bi bi-stopwatch-fill me-1"></i> Tiempo en mesa
+                    </h6>
                     <h2 class="fw-bold mb-0">{{ $sesionActiva->created_at->diffForHumans() }}</h2>
                 </div>
             </div>
         </div>
     </div>
+
+</div>
 
     <div class="card border-0 shadow-sm rounded-4">
         <div class="card-header bg-white border-bottom pt-3 pb-2">
@@ -90,7 +106,7 @@
                         <div class="mb-5">
                             <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
                                 <div class="d-flex align-items-center">
-                                    <i class="bi bi-person-circle fs-3 text-primary me-2"></i>
+                                   <i class="bi bi-person-circle fs-3 me-2" style="color: #F99916; "></i>
                                     <h4 class="fw-bold mb-0">{{ $nombreCliente }}</h4>
                                     <span class="badge bg-secondary ms-3 rounded-pill">
                                         {{ $datosCliente['cantidad_rondas'] }} rondas
@@ -150,11 +166,13 @@
     </div>
     <br>
     <form action="{{ route('admin.mesa.desocupar', $mesa->id) }}" method="POST">
-                @csrf
-                <button id="btnCerrar" class="btn btn-warning fw-bold shadow-sm rounded-pill px-4 py-2">
-                    <i class="bi bi-door-closed me-1"></i> Cerrar
-                </button>
-            </form>
+        @csrf
+        
+        <button id="btnCerrar" class="btn fw-bold shadow-sm rounded-pill px-4 py-2" 
+                style="background-color: #FFF7ED; color: #C2410C; border: 1px solid #C2410C;">
+            <i class="bi bi-door-closed me-1"></i> Cerrar
+        </button>
+    </form>
 
     @include('admin.modals.cobrar-mesa')
 

@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\Admin\LoginAdminRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Models\Usuario; 
 
 class AuthController extends Controller
 {
@@ -42,4 +43,25 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
         return redirect('/login');
     }
+
+
+    public function showForgotPasswordForm()
+    {
+        return view('auth.forgot-password');
+    }
+
+    
+   public function processForgotPassword(Request $request)
+{
+    $request->validate([
+        'email' => 'required|email'
+    ]);
+    $user = Usuario::where('email', $request->email)->first();
+
+    if (!$user) {
+        return back()->withErrors(['email' => 'No se ha encontrado ningún usuario con ese correo.']);
+    }
+
+    return back()->with('status', '¡Se ha enviado un enlace para restablecer la contraseña a su correo!');
+}
 }

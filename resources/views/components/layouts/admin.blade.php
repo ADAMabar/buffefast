@@ -449,16 +449,16 @@
         </div>
       
         <nav class="d-flex flex-column flex-grow-1">
-            <a href="{{ route('admin.mesas') }}" class="nav-link-admin active">
+            <a href="{{ route('admin.mesas') }}" class="nav-link-admin {{ request()->routeIs('admin.mesa*') ? 'active' : '' }}">
                 <i class="bi bi-grid-fill"></i> Gestión de Mesas
             </a>
-            <a href="{{ route('admin.platos.index') }}" class="nav-link-admin">
+            <a href="{{ route('admin.platos.index') }}" class="nav-link-admin {{ request()->routeIs('admin.platos*') ? 'active' : '' }}">
                 <i class="bi bi-journal-richtext"></i> Menú de Platos
             </a>
-            <a href="{{ route('admin.historial') }}" class="nav-link-admin">
+            <a href="{{ route('admin.historial') }}" class="nav-link-admin {{ request()->routeIs('admin.historial*') ? 'active' : '' }}">
                 <i class="bi bi-graph-up-arrow"></i> Historial / Ventas
             </a>
-            <a href="{{ route('admin.configuracion.index') }}" class="nav-link-admin">
+            <a href="{{ route('admin.configuracion.index') }}" class="nav-link-admin {{ request()->routeIs('admin.configuracion*') ? 'active' : '' }}">
                 <i class="bi bi-gear-fill"></i> Configuración
             </a>
         </nav>
