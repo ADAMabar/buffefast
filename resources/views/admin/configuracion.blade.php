@@ -112,6 +112,10 @@
             transform: translateY(-2px);
             box-shadow: 0 12px 25px rgba(17,24,39,.3);
         }
+        #cfgForm {
+    padding-bottom: 6rem; 
+}
+        
 
         
     </style>

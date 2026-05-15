@@ -76,7 +76,7 @@
                     <h6 class="fw-bold mb-1" style="color: #FFF7ED;">
                         <i class="bi bi-stopwatch-fill me-1"></i> Tiempo en mesa
                     </h6>
-                    <h2 class="fw-bold mb-0">{{ $sesionActiva->created_at->diffForHumans() }}</h2>
+                    <h2 class="fw-bold mb-0">{{ $sesionActiva->created_at->locale('es')->diffForHumans() }}</h2>
                 </div>
             </div>
         </div>

@@ -29,6 +29,7 @@
             display: flex;
             height: 100vh;
             overflow: hidden;
+          
         }
 
         /* Sidebar 2026 */
@@ -442,7 +443,7 @@
             <i class="bi bi-chevron-left"></i>
         </button>
 
-        <div class="d-flex align-items-center gap-3 mb-5 px-2">
+        <div class="d-flex align-items-center gap-3 mb-3 px-2">
 
              <img src="{{ asset('storage/logos/LogoBuffeFast.png') }}" alt="Logo" style="width: 150px; height: 100px;">
               <h2 class="h5 mb-0 fw-bold">Admin TPV</h2>
